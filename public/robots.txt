@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://spotify-llm.goseland.org/sitemap.xml

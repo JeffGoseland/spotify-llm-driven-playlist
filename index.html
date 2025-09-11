@@ -1,18 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="AI-powered Spotify playlist generator using advanced LLM technology" />
-    <meta name="robots" content="index, follow" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify LLM Playlist Generator</title>
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            color: white;
+            padding: 4rem 0;
+        }
+        .playlist-card {
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .playlist-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container text-center">
+            <i class="fab fa-spotify fa-5x mb-4"></i>
+            <h1 class="display-4 mb-4">Spotify LLM Playlist Generator</h1>
+            <p class="lead mb-4">Create intelligent playlists using AI. Describe your mood, activity, or style and let our LLM generate the perfect playlist for you.</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <!-- LLM Playlist Generator -->
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white">
+                        <h5><i class="fas fa-magic me-2"></i>AI Playlist Generator</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="playlistPrompt" class="form-label">Describe your perfect playlist:</label>
+                            <textarea class="form-control" id="playlistPrompt" rows="3" 
+                                placeholder="e.g., Create a workout playlist that starts slow and builds energy..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <small class="text-muted">Quick prompts:</small>
+                            <div class="mt-2">
+                                <button class="btn btn-outline-primary btn-sm me-2 mb-2" onclick="setPrompt('Create a workout playlist that starts slow and builds energy')">
+                                    💪 Workout Mix
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm me-2 mb-2" onclick="setPrompt('Make a sad playlist for a rainy day with indie artists')">
+                                    😢 Rainy Day Vibes
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm me-2 mb-2" onclick="setPrompt('Generate a party mix that transitions from pop to electronic')">
+                                    🎉 Party Mix
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm me-2 mb-2" onclick="setPrompt('Create a study playlist with ambient and instrumental music')">
+                                    📚 Study Focus
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success w-100" onclick="generatePlaylist()">
+                            <i class="fas fa-magic me-2"></i>Generate Playlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="row mt-4" id="resultsSection" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-music me-2"></i>Generated Playlist</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="playlistResults">
+                            <!-- Results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner-border text-success mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5>Generating your playlist...</h5>
+                    <p class="text-muted">Our AI is analyzing your request and creating the perfect playlist.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+    <script>
+        function setPrompt(prompt) {
+            document.getElementById('playlistPrompt').value = prompt;
+        }
+
+        function generatePlaylist() {
+            const prompt = document.getElementById('playlistPrompt').value.trim();
+            
+            if (!prompt) {
+                alert('Please enter a description for your playlist');
+                return;
+            }
+
+            // Show loading modal
+            const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+            loadingModal.show();
+
+            // Simulate LLM generation (replace with real API call)
+            setTimeout(() => {
+                const mockResults = {
+                    name: `AI Generated: ${prompt.substring(0, 30)}...`,
+                    description: `Playlist generated based on: "${prompt}"`,
+                    tracks: [
+                        {
+                            name: "Sample Track 1",
+                            artist: "Demo Artist",
+                            album: "Demo Album",
+                            external_url: "https://open.spotify.com/track/demo1"
+                        },
+                        {
+                            name: "Sample Track 2", 
+                            artist: "Another Artist",
+                            album: "Another Album",
+                            external_url: "https://open.spotify.com/track/demo2"
+                        },
+                        {
+                            name: "Sample Track 3",
+                            artist: "Third Artist", 
+                            album: "Third Album",
+                            external_url: "https://open.spotify.com/track/demo3"
+                        },
+                        {
+                            name: "Sample Track 4",
+                            artist: "Fourth Artist",
+                            album: "Fourth Album",
+                            external_url: "https://open.spotify.com/track/demo4"
+                        },
+                        {
+                            name: "Sample Track 5",
+                            artist: "Fifth Artist",
+                            album: "Fifth Album",
+                            external_url: "https://open.spotify.com/track/demo5"
+                        }
+                    ]
+                };
+
+                displayResults(mockResults);
+                loadingModal.hide();
+            }, 3000); // 3 second delay to simulate LLM processing
+        }
+
+        function displayResults(results) {
+            const resultsSection = document.getElementById('resultsSection');
+            const playlistResults = document.getElementById('playlistResults');
+            
+            playlistResults.innerHTML = `
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-music me-2"></i>${results.name}</h6>
+                    <p class="mb-0">${results.description}</p>
+                </div>
+                
+                <div class="row">
+                    ${results.tracks.map((track, index) => `
+                        <div class="col-md-6 mb-3">
+                            <div class="card playlist-card">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">${track.name}</h6>
+                                        <p class="mb-1 text-muted">${track.artist} • ${track.album}</p>
+                                    </div>
+                                    <div class="ms-3">
+                                        <a href="${track.external_url}" target="_blank" class="btn btn-sm btn-outline-success">
+                                            <i class="fab fa-spotify"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
 </html>

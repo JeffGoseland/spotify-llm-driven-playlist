@@ -1,29 +1,6 @@
 [build]
-  publish = "dist"
-  command = "npm run build"
-
-[build.environment]
-  NODE_VERSION = "18"
-
-# Domain configuration for goseland.org
-[context.production]
-  command = "npm run build"
-
-[context.deploy-preview]
-  command = "npm run build"
-
-[context.branch-deploy]
-  command = "npm run build"
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    X-XSS-Protection = "1; mode=block"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://api.spotify.com https://api.groq.com; font-src 'self' https://cdnjs.cloudflare.com;"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+  publish = "."
+  command = "echo 'Static site - no build needed'"
 
 # Project redirects for goseland.org subdomains
 [[redirects]]
@@ -36,7 +13,7 @@
   to = "https://office-crossword.netlify.app/:splat"
   status = 200
 
-# API routes - handle functions first
+# API routes - handle functions
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
