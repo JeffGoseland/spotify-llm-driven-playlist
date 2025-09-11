@@ -1,3 +1,7 @@
+# Project redirects for goseland.org subdomains
+/steve-goseland/* https://stevegoseland.netlify.app/:splat 200
+/office-crossword/* https://office-crossword.netlify.app/:splat 200
+
 # API routes
 /api/* /.netlify/functions/:splat 200
 
