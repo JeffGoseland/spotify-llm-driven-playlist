@@ -1,0 +1,25 @@
+{
+  "name": "spotify-llm-playlist-generator",
+  "version": "1.0.0",
+  "description": "AI-powered Spotify playlist generator using LLM",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.0",
+    "spotify-web-api-js": "^1.5.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.0",
+    "vite": "^5.0.0"
+  },
+  "keywords": ["spotify", "playlist", "ai", "llm", "music"],
+  "author": "Your Name",
+  "license": "MIT"
+}
