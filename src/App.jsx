@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap'
 import PlaylistGenerator from './components/PlaylistGenerator'
 import TrackSearch from './components/TrackSearch'
 import PlaylistManager from './components/PlaylistManager'
+import NotFound from './components/NotFound'
 import './App.css'
 
 function App() {
@@ -45,50 +47,75 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <nav className="navbar navbar-dark bg-dark">
-        <div className="container">
-          <span className="navbar-brand">
-            <i className="fab fa-spotify me-2"></i>Spotify LLM Generator
-          </span>
-          <div className="navbar-nav ms-auto">
-            <span className="nav-link">Welcome, {user?.display_name}!</span>
-            <button className="btn btn-outline-light btn-sm ms-2" onClick={handleLogout}>
-              Logout
-            </button>
+    <Router>
+      <div className="App">
+        <nav className="navbar navbar-dark bg-dark">
+          <div className="container">
+            <span className="navbar-brand">
+              <i className="fab fa-spotify me-2"></i>Spotify LLM Generator
+            </span>
+            <div className="navbar-nav ms-auto">
+              <span className="nav-link">Welcome, {user?.display_name}!</span>
+              <button className="btn btn-outline-light btn-sm ms-2" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
 
-      <Container className="mt-4">
-        <Alert variant="info" className="mb-4">
-          <i className="fas fa-info-circle me-2"></i>
-          <strong>Demo Mode:</strong> This is a demonstration of the LLM-powered playlist generator. 
-          Spotify integration would be added for full functionality.
-        </Alert>
-
-        {error && (
-          <Alert variant="danger" dismissible onClose={() => setError(null)}>
-            {error}
+        <Container className="mt-4">
+          <Alert variant="info" className="mb-4">
+            <i className="fas fa-info-circle me-2"></i>
+            <strong>Demo Mode:</strong> This is a demonstration of the LLM-powered playlist generator. 
+            Spotify integration would be added for full functionality.
           </Alert>
-        )}
 
-        <Row>
-          <Col lg={6}>
-            <PlaylistGenerator />
-          </Col>
-          <Col lg={6}>
-            <TrackSearch />
-          </Col>
-        </Row>
+          {error && (
+            <Alert variant="danger" dismissible onClose={() => setError(null)}>
+              {error}
+            </Alert>
+          )}
 
-        <Row className="mt-4">
-          <Col>
-            <PlaylistManager />
-          </Col>
-        </Row>
-      </Container>
-    </div>
+          <Routes>
+            <Route path="/" element={
+              <>
+                <Row>
+                  <Col lg={6}>
+                    <PlaylistGenerator />
+                  </Col>
+                  <Col lg={6}>
+                    <TrackSearch />
+                  </Col>
+                </Row>
+                <Row className="mt-4">
+                  <Col>
+                    <PlaylistManager />
+                  </Col>
+                </Row>
+              </>
+            } />
+            <Route path="/dashboard" element={
+              <>
+                <Row>
+                  <Col lg={6}>
+                    <PlaylistGenerator />
+                  </Col>
+                  <Col lg={6}>
+                    <TrackSearch />
+                  </Col>
+                </Row>
+                <Row className="mt-4">
+                  <Col>
+                    <PlaylistManager />
+                  </Col>
+                </Row>
+              </>
+            } />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Container>
+      </div>
+    </Router>
   )
 }
 
