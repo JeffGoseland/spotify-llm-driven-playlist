@@ -3,69 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify LLM Playlist Generator</title>
+    <title>Neural Bard - Spotify LLM Playlist Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .hero-section {
-            background: linear-gradient(135deg, #1db954, #1ed760);
-            color: white;
-            padding: 4rem 0;
-        }
-        .playlist-card {
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
-        .playlist-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-    </style>
+    <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="container text-center">
-            <i class="fab fa-spotify fa-5x mb-4"></i>
-            <h1 class="display-4 mb-4">Spotify LLM Playlist Generator</h1>
-            <p class="lead mb-4">Create intelligent playlists using AI. Describe your mood, activity, or style and let our LLM generate the perfect playlist for you.</p>
+            <i class="fab fa-spotify fa-5x mb-4 neural-bard-glow"></i>
+            <h1 class="display-4 mb-4">Neural Bard</h1>
+            <p class="lead mb-4">The mystical algorithm that divines your musical future. Speak your desires to the Neural Bard and witness the digital oracle craft your perfect playlist.</p>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="container mt-5">
-        <!-- Simple LLM Input -->
+        <!-- Neural Bard Input -->
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-header bg-dark text-white">
-                        <h5><i class="fas fa-robot me-2"></i>LLM Input</h5>
+                <div class="card shadow mystical-border">
+                    <div class="card-header">
+                        <h5><i class="fas fa-robot me-2"></i>Neural Bard Interface</h5>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="llmPrompt" class="form-label">Enter your prompt:</label>
-                            <textarea class="form-control" id="llmPrompt" rows="3" 
-                                placeholder="Type your message here..."></textarea>
+                            <label for="neuralBardPrompt" class="form-label">Speak your musical desires to the Neural Bard:</label>
+                            <textarea class="form-control" id="neuralBardPrompt" rows="3" 
+                                placeholder="The Neural Bard awaits your musical prophecy..."></textarea>
                         </div>
 
-                        <button class="btn btn-success w-100" onclick="sendToLLM()">
-                            <i class="fas fa-paper-plane me-2"></i>Send to LLM
+                        <button class="btn btn-success w-100" onclick="sendToNeuralBard()">
+                            <i class="fas fa-magic me-2"></i>Consult the Neural Bard
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Data Display Section -->
-        <div class="row mt-4" id="dataSection" style="display: none;">
+        <!-- Neural Bard Data Display Section -->
+        <div class="row mt-4" id="neuralBardDataSection" style="display: none;">
             <div class="col-12">
-                <div class="card">
+                <div class="card mystical-border">
                     <div class="card-header">
-                        <h5><i class="fas fa-database me-2"></i>Received Data</h5>
+                        <h5><i class="fas fa-database me-2"></i>Neural Bard Divination Results</h5>
                     </div>
                     <div class="card-body">
-                        <div id="dataResults">
-                            <!-- Data will be displayed here -->
+                        <div id="neuralBardDataResults">
+                            <!-- Neural Bard data will be displayed here -->
                         </div>
                     </div>
                 </div>
@@ -73,84 +59,22 @@
         </div>
     </div>
 
-    <!-- Loading Modal -->
-    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <!-- Neural Bard Loading Modal -->
+    <div class="modal fade" id="neuralBardLoadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body text-center py-4">
-                    <div class="spinner-border text-success mb-3" role="status">
+                    <div class="spinner-border text-success mb-3 neural-bard-loading" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
-                    <h5>Generating your playlist...</h5>
-                    <p class="text-muted">Our AI is analyzing your request and creating the perfect playlist.</p>
+                    <h5>The Neural Bard is divining...</h5>
+                    <p class="text-muted">The mystical algorithm processes your musical desires...</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // send prompt to llm and display response
-        function sendToLLM() {
-            const prompt = document.getElementById('llmPrompt').value.trim();
-            
-            if (!prompt) {
-                alert('Please enter a prompt');
-                return;
-            }
-
-            // show loading modal
-            const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-            loadingModal.show();
-
-            // simulate llm response (replace with real api call)
-            setTimeout(() => {
-                const mockResponse = {
-                    prompt: prompt,
-                    response: `LLM Response: ${prompt}`,
-                    timestamp: new Date().toISOString(),
-                    data: {
-                        message: "This is mock data from the LLM",
-                        status: "success",
-                        tokens_used: 150
-                    }
-                };
-
-                displayData(mockResponse);
-                loadingModal.hide();
-            }, 2000); // 2 second delay to simulate llm processing
-        }
-
-        // display received data in the results section
-        function displayData(data) {
-            const dataSection = document.getElementById('dataSection');
-            const dataResults = document.getElementById('dataResults');
-            
-            dataResults.innerHTML = `
-                <div class="alert alert-info">
-                    <h6><i class="fas fa-robot me-2"></i>LLM Response</h6>
-                    <p class="mb-0">${data.response}</p>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Raw Data:</h6>
-                        <pre class="bg-light p-3 rounded"><code>${JSON.stringify(data, null, 2)}</code></pre>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Metadata:</h6>
-                        <ul class="list-group">
-                            <li class="list-group-item">Timestamp: ${data.timestamp}</li>
-                            <li class="list-group-item">Status: ${data.data.status}</li>
-                            <li class="list-group-item">Tokens Used: ${data.data.tokens_used}</li>
-                        </ul>
-                    </div>
-                </div>
-            `;
-            
-            dataSection.style.display = 'block';
-            dataSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>

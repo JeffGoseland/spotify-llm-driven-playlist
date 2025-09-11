@@ -2,23 +2,6 @@
   publish = "."
   command = "echo 'Static site - no build needed'"
 
-# Project redirects for goseland.org subdomains
-[[redirects]]
-  from = "/steve-goseland/*"
-  to = "https://stevegoseland.netlify.app/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/office-crossword/*"
-  to = "https://office-crossword.netlify.app/:splat"
-  status = 200
-
-# API routes - handle functions
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
 # SPA routing - redirect all other routes to index.html
 [[redirects]]
   from = "/*"
