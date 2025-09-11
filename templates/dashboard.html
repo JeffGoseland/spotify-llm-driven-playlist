@@ -1,0 +1,565 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Spotify Playlist Generator{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Welcome, {{ user.display_name }}!</h2>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createPlaylistModal">
+                <i class="fas fa-plus me-2"></i>Create New Playlist
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Smart Playlist Generation -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-magic me-2"></i>Smart Playlist Generator</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <select class="form-select" id="playlistType">
+                            <option value="mood">Mood-based</option>
+                            <option value="genre">Genre-based</option>
+                            <option value="artist">Artist-based</option>
+                            <option value="smart">Smart Recommendations</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="playlistValue" placeholder="Enter mood, genre, or artist name...">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="playlistLimit">
+                            <option value="10">10 tracks</option>
+                            <option value="20" selected>20 tracks</option>
+                            <option value="30">30 tracks</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-success w-100" onclick="generateSmartPlaylist()">
+                            <i class="fas fa-magic me-1"></i>Generate Playlist
+                        </button>
+                    </div>
+                </div>
+                <div class="row mt-3" id="moodButtons" style="display: none;">
+                    <div class="col-12">
+                        <p class="mb-2">Quick mood selection:</p>
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="setMood('happy')">😊 Happy</button>
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="setMood('sad')">😢 Sad</button>
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="setMood('energetic')">⚡ Energetic</button>
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="setMood('calm')">😌 Calm</button>
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="setMood('party')">🎉 Party</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="setMood('workout')">💪 Workout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-search me-2"></i>Search Tracks</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search for tracks, artists, or genres...">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="searchLimit">
+                            <option value="10">10 results</option>
+                            <option value="20" selected>20 results</option>
+                            <option value="50">50 results</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100" onclick="searchTracks()">
+                            <i class="fas fa-search me-1"></i>Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Results -->
+<div class="row mb-4" id="searchResults" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-music me-2"></i>Search Results</h5>
+                <button class="btn btn-sm btn-outline-success" onclick="addSelectedTracks()">
+                    <i class="fas fa-plus me-1"></i>Add Selected
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="search-results" id="tracksList">
+                    <!-- Search results will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Playlists -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-list me-2"></i>Your Playlists</h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadUserPlaylists()">
+                    <i class="fas fa-sync me-1"></i>Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="userPlaylists">
+                    <p class="text-muted">Click refresh to load your playlists.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Current Playlist -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-music me-2"></i>Current Playlist</h5>
+            </div>
+            <div class="card-body">
+                <div id="currentPlaylist">
+                    <p class="text-muted">No playlist selected. Create a new playlist or select tracks to get started.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Playlist Modal -->
+<div class="modal fade" id="createPlaylistModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Playlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createPlaylistForm">
+                    <div class="mb-3">
+                        <label for="playlistName" class="form-label">Playlist Name</label>
+                        <input type="text" class="form-control" id="playlistName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="playlistDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="playlistDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="createPlaylist()">Create Playlist</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedTracks = [];
+let currentPlaylistId = null;
+
+function searchTracks() {
+    const query = document.getElementById('searchInput').value.trim();
+    const limit = document.getElementById('searchLimit').value;
+    
+    if (!query) {
+        showAlert('Please enter a search query', 'warning');
+        return;
+    }
+    
+    fetch(`/search_tracks?q=${encodeURIComponent(query)}&limit=${limit}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showAlert(data.error, 'danger');
+                return;
+            }
+            
+            displaySearchResults(data.tracks);
+            document.getElementById('searchResults').style.display = 'block';
+        })
+        .catch(error => {
+            showAlert('Search failed: ' + error.message, 'danger');
+        });
+}
+
+function displaySearchResults(tracks) {
+    const tracksList = document.getElementById('tracksList');
+    tracksList.innerHTML = '';
+    
+    tracks.forEach(track => {
+        const trackDiv = document.createElement('div');
+        trackDiv.className = 'card mb-2 track-card';
+        trackDiv.innerHTML = `
+            <div class="card-body d-flex align-items-center">
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" value="${track.id}" onchange="toggleTrackSelection('${track.id}')">
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-1">${track.name}</h6>
+                    <p class="mb-1 text-muted">${track.artist} • ${track.album}</p>
+                </div>
+                <div class="ms-3">
+                    <a href="${track.external_url}" target="_blank" class="btn btn-sm btn-outline-success">
+                        <i class="fab fa-spotify"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+        tracksList.appendChild(trackDiv);
+    });
+}
+
+function toggleTrackSelection(trackId) {
+    const checkbox = document.querySelector(`input[value="${trackId}"]`);
+    if (checkbox.checked) {
+        if (!selectedTracks.includes(trackId)) {
+            selectedTracks.push(trackId);
+        }
+    } else {
+        selectedTracks = selectedTracks.filter(id => id !== trackId);
+    }
+}
+
+function addSelectedTracks() {
+    if (selectedTracks.length === 0) {
+        showAlert('Please select tracks to add', 'warning');
+        return;
+    }
+    
+    if (!currentPlaylistId) {
+        showAlert('Please create a playlist first', 'warning');
+        return;
+    }
+    
+    fetch('/add_tracks_to_playlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            playlist_id: currentPlaylistId,
+            track_ids: selectedTracks
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert(`Added ${selectedTracks.length} tracks to playlist!`, 'success');
+            selectedTracks = [];
+            // Clear checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        } else {
+            showAlert(data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('Failed to add tracks: ' + error.message, 'danger');
+    });
+}
+
+function createPlaylist() {
+    const name = document.getElementById('playlistName').value.trim();
+    const description = document.getElementById('playlistDescription').value.trim();
+    
+    if (!name) {
+        showAlert('Please enter a playlist name', 'warning');
+        return;
+    }
+    
+    fetch('/create_playlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            name: name,
+            description: description
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            currentPlaylistId = data.playlist.id;
+            showAlert(`Playlist "${data.playlist.name}" created successfully!`, 'success');
+            document.getElementById('createPlaylistModal').querySelector('.btn-close').click();
+            document.getElementById('createPlaylistForm').reset();
+            
+            // Update current playlist display
+            document.getElementById('currentPlaylist').innerHTML = `
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-music me-2"></i>${data.playlist.name}</h6>
+                    <p class="mb-2">${description || 'No description'}</p>
+                    <a href="${data.playlist.url}" target="_blank" class="btn btn-sm btn-success">
+                        <i class="fab fa-spotify me-1"></i>Open in Spotify
+                    </a>
+                </div>
+            `;
+        } else {
+            showAlert(data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('Failed to create playlist: ' + error.message, 'danger');
+    });
+}
+
+// Allow Enter key to trigger search
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchTracks();
+    }
+});
+
+// Smart playlist generation functions
+function generateSmartPlaylist() {
+    const type = document.getElementById('playlistType').value;
+    const value = document.getElementById('playlistValue').value.trim();
+    const limit = parseInt(document.getElementById('playlistLimit').value);
+    
+    if (!value) {
+        showAlert('Please enter a value for playlist generation', 'warning');
+        return;
+    }
+    
+    const data = {
+        type: type,
+        value: value,
+        limit: limit
+    };
+    
+    // Add include_related for artist playlists
+    if (type === 'artist') {
+        data.include_related = true;
+    }
+    
+    fetch('/generate_smart_playlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            showAlert(data.error, 'danger');
+            return;
+        }
+        
+        if (data.tracks && data.tracks.length > 0) {
+            displaySmartPlaylistResults(data.tracks);
+            showAlert(`Generated ${data.tracks.length} tracks!`, 'success');
+        } else {
+            showAlert('No tracks found for the given criteria', 'warning');
+        }
+    })
+    .catch(error => {
+        showAlert('Failed to generate playlist: ' + error.message, 'danger');
+    });
+}
+
+function displaySmartPlaylistResults(tracks) {
+    const tracksList = document.getElementById('tracksList');
+    tracksList.innerHTML = '';
+    
+    tracks.forEach(track => {
+        const trackDiv = document.createElement('div');
+        trackDiv.className = 'card mb-2 track-card';
+        trackDiv.innerHTML = `
+            <div class="card-body d-flex align-items-center">
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" value="${track.id}" onchange="toggleTrackSelection('${track.id}')">
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-1">${track.name}</h6>
+                    <p class="mb-1 text-muted">${track.artist} • ${track.album}</p>
+                    ${track.audio_features ? `
+                        <small class="text-info">
+                            Valence: ${(track.audio_features.valence * 100).toFixed(0)}% | 
+                            Energy: ${(track.audio_features.energy * 100).toFixed(0)}% | 
+                            Danceability: ${(track.audio_features.danceability * 100).toFixed(0)}%
+                        </small>
+                    ` : ''}
+                </div>
+                <div class="ms-3">
+                    <a href="${track.external_url}" target="_blank" class="btn btn-sm btn-outline-success">
+                        <i class="fab fa-spotify"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+        tracksList.appendChild(trackDiv);
+    });
+    
+    document.getElementById('searchResults').style.display = 'block';
+}
+
+function setMood(mood) {
+    document.getElementById('playlistType').value = 'mood';
+    document.getElementById('playlistValue').value = mood;
+    updatePlaylistTypeUI();
+}
+
+function updatePlaylistTypeUI() {
+    const type = document.getElementById('playlistType').value;
+    const moodButtons = document.getElementById('moodButtons');
+    const valueInput = document.getElementById('playlistValue');
+    
+    if (type === 'mood') {
+        moodButtons.style.display = 'block';
+        valueInput.placeholder = 'Enter mood (happy, sad, energetic, calm, party, workout)...';
+    } else {
+        moodButtons.style.display = 'none';
+        if (type === 'genre') {
+            valueInput.placeholder = 'Enter genre (pop, rock, jazz, electronic, etc.)...';
+        } else if (type === 'artist') {
+            valueInput.placeholder = 'Enter artist name...';
+        } else if (type === 'smart') {
+            valueInput.placeholder = 'Enter seed track names (comma-separated)...';
+        }
+    }
+}
+
+function loadUserPlaylists() {
+    fetch('/get_user_playlists')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showAlert(data.error, 'danger');
+                return;
+            }
+            
+            displayUserPlaylists(data.playlists);
+        })
+        .catch(error => {
+            showAlert('Failed to load playlists: ' + error.message, 'danger');
+        });
+}
+
+function displayUserPlaylists(playlists) {
+    const playlistsDiv = document.getElementById('userPlaylists');
+    
+    if (playlists.length === 0) {
+        playlistsDiv.innerHTML = '<p class="text-muted">No playlists found.</p>';
+        return;
+    }
+    
+    playlistsDiv.innerHTML = '';
+    playlists.forEach(playlist => {
+        const playlistDiv = document.createElement('div');
+        playlistDiv.className = 'card mb-2';
+        playlistDiv.innerHTML = `
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-1">${playlist.name}</h6>
+                    <p class="mb-1 text-muted">${playlist.tracks} tracks • ${playlist.public ? 'Public' : 'Private'}</p>
+                    ${playlist.description ? `<small class="text-muted">${playlist.description}</small>` : ''}
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary me-2" onclick="analyzePlaylist('${playlist.id}')">
+                        <i class="fas fa-chart-bar me-1"></i>Analyze
+                    </button>
+                    <a href="${playlist.url}" target="_blank" class="btn btn-sm btn-outline-success">
+                        <i class="fab fa-spotify"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+        playlistsDiv.appendChild(playlistDiv);
+    });
+}
+
+function analyzePlaylist(playlistId) {
+    fetch(`/analyze_playlist?playlist_id=${playlistId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showAlert(data.error, 'danger');
+                return;
+            }
+            
+            showPlaylistAnalysis(data);
+        })
+        .catch(error => {
+            showAlert('Failed to analyze playlist: ' + error.message, 'danger');
+        });
+}
+
+function showPlaylistAnalysis(analysis) {
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Playlist Analysis: ${analysis.playlist_name}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Basic Info</h6>
+                            <p><strong>Tracks:</strong> ${analysis.track_count}</p>
+                            <p><strong>Mood:</strong> <span class="badge bg-primary">${analysis.mood}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Audio Features</h6>
+                            ${analysis.average_features ? `
+                                <p><strong>Valence:</strong> ${(analysis.average_features.valence * 100).toFixed(1)}%</p>
+                                <p><strong>Energy:</strong> ${(analysis.average_features.energy * 100).toFixed(1)}%</p>
+                                <p><strong>Danceability:</strong> ${(analysis.average_features.danceability * 100).toFixed(1)}%</p>
+                                <p><strong>Tempo:</strong> ${analysis.average_features.tempo ? analysis.average_features.tempo.toFixed(1) : 'N/A'} BPM</p>
+                            ` : '<p class="text-muted">No audio features available</p>'}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+    
+    // Remove modal from DOM when hidden
+    modal.addEventListener('hidden.bs.modal', () => {
+        document.body.removeChild(modal);
+    });
+}
+
+// Update UI when playlist type changes
+document.getElementById('playlistType').addEventListener('change', updatePlaylistTypeUI);
+
+// Load playlists on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserPlaylists();
+});
+</script>
+{% endblock %}
