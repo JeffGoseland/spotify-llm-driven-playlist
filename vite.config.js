@@ -11,7 +11,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          spotify: ['spotify-web-api-js']
+          bootstrap: ['react-bootstrap', 'bootstrap']
         }
       }
     }

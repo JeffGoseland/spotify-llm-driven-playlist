@@ -16,24 +16,31 @@ const TrackSearch = () => {
     setIsSearching(true)
     setError(null)
 
-    try {
-      const response = await fetch(`/api/search-tracks?q=${encodeURIComponent(query)}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('spotify_token')}`
+    // Demo mode - simulate search
+    setTimeout(() => {
+      const mockResults = [
+        {
+          name: `Search Result for "${query}"`,
+          artist: "Demo Artist",
+          album: "Demo Album",
+          external_url: "https://open.spotify.com/track/demo1"
+        },
+        {
+          name: `Another ${query} Track`,
+          artist: "Another Artist", 
+          album: "Another Album",
+          external_url: "https://open.spotify.com/track/demo2"
+        },
+        {
+          name: `More ${query} Music`,
+          artist: "Third Artist",
+          album: "Third Album", 
+          external_url: "https://open.spotify.com/track/demo3"
         }
-      })
-
-      if (!response.ok) {
-        throw new Error('Search failed')
-      }
-
-      const data = await response.json()
-      setResults(data.tracks || [])
-    } catch (err) {
-      setError(err.message)
-    } finally {
+      ]
+      setResults(mockResults)
       setIsSearching(false)
-    }
+    }, 1500) // Simulate 1.5 second delay
   }
 
   return (

@@ -16,27 +16,35 @@ const PlaylistGenerator = () => {
     setIsGenerating(true)
     setError(null)
 
-    try {
-      const response = await fetch('/api/generate-playlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('spotify_token')}`
-        },
-        body: JSON.stringify({ prompt })
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to generate playlist')
+    // Demo mode - simulate LLM generation
+    setTimeout(() => {
+      const mockResults = {
+        name: `AI Generated: ${prompt.substring(0, 30)}...`,
+        description: `Playlist generated based on: "${prompt}"`,
+        tracks: [
+          {
+            name: "Sample Track 1",
+            artist: "Demo Artist",
+            album: "Demo Album",
+            external_url: "https://open.spotify.com/track/demo1"
+          },
+          {
+            name: "Sample Track 2", 
+            artist: "Another Artist",
+            album: "Another Album",
+            external_url: "https://open.spotify.com/track/demo2"
+          },
+          {
+            name: "Sample Track 3",
+            artist: "Third Artist", 
+            album: "Third Album",
+            external_url: "https://open.spotify.com/track/demo3"
+          }
+        ]
       }
-
-      const data = await response.json()
-      setResults(data)
-    } catch (err) {
-      setError(err.message)
-    } finally {
+      setResults(mockResults)
       setIsGenerating(false)
-    }
+    }, 2000) // Simulate 2 second delay
   }
 
   const quickPrompts = [

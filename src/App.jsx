@@ -1,75 +1,23 @@
-import React, { useState, useEffect } from 'react'
-import { Container, Row, Col, Card, Button, Alert, Spinner } from 'react-bootstrap'
+import React, { useState } from 'react'
+import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap'
 import PlaylistGenerator from './components/PlaylistGenerator'
 import TrackSearch from './components/TrackSearch'
 import PlaylistManager from './components/PlaylistManager'
 import './App.css'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(true) // Demo mode - always authenticated
+  const [user, setUser] = useState({ display_name: 'Demo User' }) // Mock user
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    // Check if user is already authenticated
-    const token = localStorage.getItem('spotify_token')
-    if (token) {
-      // Verify token is still valid
-      fetchUserProfile(token)
-    } else {
-      setLoading(false)
-    }
-  }, [])
-
-  const fetchUserProfile = async (token) => {
-    try {
-      const response = await fetch('https://api.spotify.com/v1/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      
-      if (response.ok) {
-        const userData = await response.json()
-        setUser(userData)
-        setIsAuthenticated(true)
-      } else {
-        // Token expired, clear it
-        localStorage.removeItem('spotify_token')
-      }
-    } catch (err) {
-      console.error('Error fetching user profile:', err)
-      localStorage.removeItem('spotify_token')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleLogin = () => {
-    const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID
-    const redirectUri = window.location.origin + '/callback'
-    const scopes = 'playlist-modify-public playlist-modify-private user-read-private user-read-email'
-    
-    const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}`
-    
-    window.location.href = authUrl
+    // Demo mode - just show success message
+    alert('Demo Mode: Spotify authentication would be implemented here!')
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('spotify_token')
     setIsAuthenticated(false)
     setUser(null)
-  }
-
-  if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    )
   }
 
   if (!isAuthenticated) {
@@ -113,6 +61,12 @@ function App() {
       </nav>
 
       <Container className="mt-4">
+        <Alert variant="info" className="mb-4">
+          <i className="fas fa-info-circle me-2"></i>
+          <strong>Demo Mode:</strong> This is a demonstration of the LLM-powered playlist generator. 
+          Spotify integration would be added for full functionality.
+        </Alert>
+
         {error && (
           <Alert variant="danger" dismissible onClose={() => setError(null)}>
             {error}

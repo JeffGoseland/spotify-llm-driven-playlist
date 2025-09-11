@@ -11,48 +11,51 @@ const PlaylistManager = () => {
   }, [])
 
   const fetchPlaylists = async () => {
-    try {
-      const response = await fetch('/api/user-playlists', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('spotify_token')}`
+    // Demo mode - mock playlists
+    setTimeout(() => {
+      const mockPlaylists = [
+        {
+          id: 'demo1',
+          name: 'My Workout Mix',
+          description: 'High energy tracks for exercise',
+          tracks: 15,
+          public: true,
+          url: 'https://open.spotify.com/playlist/demo1'
+        },
+        {
+          id: 'demo2', 
+          name: 'Chill Vibes',
+          description: 'Relaxing music for studying',
+          tracks: 20,
+          public: false,
+          url: 'https://open.spotify.com/playlist/demo2'
+        },
+        {
+          id: 'demo3',
+          name: 'Party Hits',
+          description: 'Upbeat tracks for dancing',
+          tracks: 25,
+          public: true,
+          url: 'https://open.spotify.com/playlist/demo3'
         }
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch playlists')
-      }
-
-      const data = await response.json()
-      setPlaylists(data.playlists || [])
-    } catch (err) {
-      setError(err.message)
-    } finally {
+      ]
+      setPlaylists(mockPlaylists)
       setIsLoading(false)
-    }
+    }, 1000)
   }
 
   const createPlaylist = async (name, description) => {
-    try {
-      const response = await fetch('/api/create-playlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('spotify_token')}`
-        },
-        body: JSON.stringify({ name, description })
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to create playlist')
-      }
-
-      const data = await response.json()
-      setPlaylists([...playlists, data.playlist])
-      return data.playlist
-    } catch (err) {
-      setError(err.message)
-      return null
+    // Demo mode - add to mock playlists
+    const newPlaylist = {
+      id: `demo${Date.now()}`,
+      name,
+      description,
+      tracks: 0,
+      public: true,
+      url: `https://open.spotify.com/playlist/demo${Date.now()}`
     }
+    setPlaylists([...playlists, newPlaylist])
+    return newPlaylist
   }
 
   if (isLoading) {
