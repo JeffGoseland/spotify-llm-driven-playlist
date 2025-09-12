@@ -1,4 +1,4 @@
-/* neural bard - spotify llm playlist generator styles */
+the cir of  the cir/* neural bard - spotify llm playlist generator styles */
 
 body {
     background-color: #191414;
@@ -298,6 +298,53 @@ body {
 .list-group-item {
     background-color: #404040;
     border-color: #535353;
+    color: #ffffff;
+}
+
+/* Song List Styling */
+.song-list-container {
+    margin-top: 10px;
+}
+
+.song-list-textarea {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    background-color: #1a1a1a;
+    border: 1px solid #1db954;
+    color: #ffffff;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.song-list-textarea:focus {
+    border-color: #1ed760;
+    box-shadow: 0 0 0 0.2rem rgba(29, 185, 84, 0.25);
+}
+
+.song-list-container .btn {
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+.song-list-container .btn-outline-success {
+    border-color: #1db954;
+    color: #1db954;
+}
+
+.song-list-container .btn-outline-success:hover {
+    background-color: #1db954;
+    border-color: #1db954;
+    color: #000000;
+}
+
+.song-list-container .btn-outline-info {
+    border-color: #17a2b8;
+    color: #17a2b8;
+}
+
+.song-list-container .btn-outline-info:hover {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
     color: #ffffff;
 }
 

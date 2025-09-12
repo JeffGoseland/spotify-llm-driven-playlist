@@ -64,11 +64,31 @@ function displayNeuralBardData(data) {
     const dataSection = document.getElementById('neuralBardDataSection');
     const dataResults = document.getElementById('neuralBardDataResults');
     
+    // extract songs from the response
+    const songs = extractSongsFromResponse(data.response);
+    
     dataResults.innerHTML = `
         <div class="alert alert-info neural-bard-glow">
             <h6><i class="fas fa-robot me-2"></i>Neural Bard Response</h6>
             <p class="mb-0">${data.response}</p>
         </div>
+        
+        ${songs.length > 0 ? `
+        <div class="alert alert-success">
+            <h6><i class="fas fa-music me-2"></i>Extracted Song List (${songs.length} songs):</h6>
+            <div class="song-list-container">
+                <textarea class="form-control song-list-textarea" rows="${Math.min(songs.length + 2, 15)}" readonly>${songs.join('\n')}</textarea>
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-success" onclick="copySongList()">
+                        <i class="fas fa-copy me-1"></i>Copy Song List
+                    </button>
+                    <button class="btn btn-sm btn-outline-info" onclick="downloadSongList()">
+                        <i class="fas fa-download me-1"></i>Download as TXT
+                    </button>
+                </div>
+            </div>
+        </div>
+        ` : ''}
         
         <div class="row">
             <div class="col-md-6">
@@ -81,7 +101,7 @@ function displayNeuralBardData(data) {
                     <li class="list-group-item">Timestamp: ${data.timestamp}</li>
                     <li class="list-group-item">Status: ${data.bardData.status}</li>
                     <li class="list-group-item">Tokens Used: ${data.bardData.tokens_used}</li>
-                    <li class="list-group-item">Mystical Confidence: ${(data.bardData.mystical_confidence * 100).toFixed(1)}%</li>
+                    <li class="list-group-item">Model: ${data.bardData.model_used}</li>
                 </ul>
             </div>
         </div>
@@ -89,6 +109,87 @@ function displayNeuralBardData(data) {
     
     dataSection.style.display = 'block';
     dataSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+// extract songs from neural bard response
+function extractSongsFromResponse(response) {
+    const songs = [];
+    
+    // try different patterns to find songs
+    const patterns = [
+        // Pattern 1: "Artist - Song" format
+        /(\d+\.\s*)?([^-\n]+)\s*-\s*([^\n]+)/g,
+        // Pattern 2: "**Artist - Song**" format (markdown bold)
+        /\*\*([^-\n]+)\s*-\s*([^\n]+)\*\*/g,
+        // Pattern 3: "Artist: Song" format
+        /(\d+\.\s*)?([^:\n]+):\s*([^\n]+)/g,
+        // Pattern 4: Lines that look like song titles
+        /^(\d+\.\s*)?(.+)$/gm
+    ];
+    
+    for (const pattern of patterns) {
+        const matches = [...response.matchAll(pattern)];
+        for (const match of matches) {
+            let song = '';
+            if (match.length >= 4) {
+                // Pattern 1 or 3: Artist - Song or Artist: Song
+                song = `${match[2].trim()} - ${match[3].trim()}`;
+            } else if (match.length >= 3) {
+                // Pattern 2: **Artist - Song**
+                song = `${match[1].trim()} - ${match[2].trim()}`;
+            } else if (match.length >= 2) {
+                // Pattern 4: Just the line
+                song = match[2].trim();
+            }
+            
+            // clean up the song string
+            song = song.replace(/^\d+\.\s*/, '').replace(/^\*\*|\*\*$/g, '').trim();
+            
+            // filter out obvious non-songs
+            if (song && 
+                song.length > 3 && 
+                !song.match(/^(Playlist|Track|Song|Music|Genre|Style|Theme|Mood|Energy|Tempo|BPM|Duration|Time|Minutes|Hours|Seconds)/i) &&
+                !song.match(/^[0-9\s\-\.]+$/) &&
+                !song.match(/^(The|A|An)\s+[A-Z][a-z]+\s+(is|are|will|can|should|would|could|might|may)/i)) {
+                songs.push(song);
+            }
+        }
+        
+        // if we found songs with this pattern, use them
+        if (songs.length > 0) {
+            break;
+        }
+    }
+    
+    // remove duplicates and limit to reasonable number
+    return [...new Set(songs)].slice(0, 50);
+}
+
+// copy song list to clipboard
+function copySongList() {
+    const textarea = document.querySelector('.song-list-textarea');
+    if (textarea) {
+        textarea.select();
+        document.execCommand('copy');
+        showNeuralBardMessage('Song list copied to clipboard!', 'success');
+    }
+}
+
+// download song list as text file
+function downloadSongList() {
+    const textarea = document.querySelector('.song-list-textarea');
+    if (textarea) {
+        const blob = new Blob([textarea.value], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'neural-bard-playlist.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showNeuralBardMessage('Song list downloaded!', 'success');
+    }
 }
 
 // show neural bard loading modal with enhanced animations
