@@ -57,7 +57,6 @@ exports.handler = async (event, context) => {
         const xaiUrl = 'https://api.x.ai/v1/chat/completions';
         
         const requestBody = {
-            model: "grok-beta",
             messages: [
                 {
                     role: "system",
@@ -68,15 +67,16 @@ exports.handler = async (event, context) => {
                     content: prompt
                 }
             ],
-            temperature: 0.7,
-            max_tokens: 500
+            model: "grok-3-fast",
+            stream: false,
+            temperature: 0.7
         };
 
         const response = await fetch(xaiUrl, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${groqApiKey}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${groqApiKey}`
             },
             body: JSON.stringify(requestBody)
         });
@@ -96,7 +96,7 @@ exports.handler = async (event, context) => {
                 message: "The Neural Bard has spoken...",
                 status: "divination_complete",
                 tokens_used: xaiResponse.usage?.total_tokens || 0,
-                model_used: xaiResponse.model || "grok-beta"
+                model_used: xaiResponse.model || "grok-4-latest"
             }
         };
 
