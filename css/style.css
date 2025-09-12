@@ -98,6 +98,162 @@ body {
     color: #ffffff;
 }
 
+/* Enhanced Neural Bard Loading Animations */
+.neural-bard-loading {
+    animation: neural-pulse 2s ease-in-out infinite;
+    border: 3px solid #1db954;
+    border-radius: 50%;
+    position: relative;
+}
+
+@keyframes neural-pulse {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.7);
+        transform: scale(1);
+    }
+    70% { 
+        box-shadow: 0 0 0 15px rgba(29, 185, 84, 0);
+        transform: scale(1.1);
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(29, 185, 84, 0);
+        transform: scale(1);
+    }
+}
+
+/* Neural Network Connection Lines */
+.neural-bard-loading::before,
+.neural-bard-loading::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(to bottom, transparent, #1db954, transparent);
+    animation: neural-connection 1.5s ease-in-out infinite;
+}
+
+.neural-bard-loading::before {
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    animation-delay: 0s;
+}
+
+.neural-bard-loading::after {
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation-delay: 0.75s;
+}
+
+@keyframes neural-connection {
+    0%, 100% { opacity: 0; transform: translateX(-50%) scaleY(0); }
+    50% { opacity: 1; transform: translateX(-50%) scaleY(1); }
+}
+
+.neural-bard-progress {
+    background: linear-gradient(45deg, #1db954, #1ed760, #1db954);
+    background-size: 200% 200%;
+    animation: neural-bard-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes neural-bard-shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Neural Bard Glow Effects */
+.neural-bard-glow {
+    animation: neural-bard-glow 3s ease-in-out infinite;
+}
+
+@keyframes neural-bard-glow {
+    0% { box-shadow: 0 0 5px rgba(29, 185, 84, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(29, 185, 84, 0.6); }
+    100% { box-shadow: 0 0 5px rgba(29, 185, 84, 0.3); }
+}
+
+/* Loading Modal Enhancements */
+#neuralBardLoadingModal .modal-content {
+    background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+    border: 2px solid #1db954;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(29, 185, 84, 0.3);
+}
+
+#neuralBardLoadingModal .modal-body {
+    color: #ffffff;
+}
+
+#neuralBardLoadingModal h5 {
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
+}
+
+#neuralBardLoadingModal .text-muted {
+    color: #b3b3b3 !important;
+}
+
+/* Additional Neural Network Effects */
+.neural-bard-loading {
+    background: radial-gradient(circle, rgba(29, 185, 84, 0.1) 0%, transparent 70%);
+}
+
+/* Floating Neural Particles */
+#neuralBardLoadingModal::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    width: 4px;
+    height: 4px;
+    background: #1db954;
+    border-radius: 50%;
+    animation: neural-particle 3s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+#neuralBardLoadingModal::after {
+    content: '';
+    position: absolute;
+    top: 60%;
+    right: 15%;
+    width: 3px;
+    height: 3px;
+    background: #1ed760;
+    border-radius: 50%;
+    animation: neural-particle 2.5s ease-in-out infinite reverse;
+    opacity: 0.4;
+}
+
+@keyframes neural-particle {
+    0%, 100% { 
+        transform: translateY(0px) scale(1);
+        opacity: 0.6;
+    }
+    50% { 
+        transform: translateY(-20px) scale(1.5);
+        opacity: 1;
+    }
+}
+
+/* Neural Bard Text Glow */
+#neuralBardLoadingModal h5 {
+    background: linear-gradient(45deg, #1db954, #1ed760, #1db954);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: neural-text-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes neural-text-shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .list-group-item {
     background-color: #404040;
     border-color: #535353;
