@@ -1,6 +1,5 @@
 [build]
   publish = "."
-  command = "echo 'Static site - no build needed'"
 
 # SPA routing - redirect all other routes to index.html
 [[redirects]]
