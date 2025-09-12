@@ -1,13 +1,24 @@
-sorexports.handler = async (event, context) => {
+exports.handler = async (event, context) => {
+    // Log the request for debugging
+    console.log('Neural Bard function called:', {
+        method: event.httpMethod,
+        origin: event.headers.origin || event.headers.Origin,
+        userAgent: event.headers['user-agent']
+    });
+
+    // CORS headers for all responses
+    const corsHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Max-Age': '86400'
+    };
+
     // handle cors preflight requests
     if (event.httpMethod === 'OPTIONS') {
         return {
             statusCode: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Access-Control-Allow-Methods': 'POST, OPTIONS'
-            },
+            headers: corsHeaders,
             body: ''
         };
     }
@@ -17,7 +28,7 @@ sorexports.handler = async (event, context) => {
         return {
             statusCode: 405,
             headers: {
-                'Access-Control-Allow-Origin': '*',
+                ...corsHeaders,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ error: 'Method not allowed' })
@@ -32,7 +43,7 @@ sorexports.handler = async (event, context) => {
             return {
                 statusCode: 400,
                 headers: {
-                    'Access-Control-Allow-Origin': '*',
+                    ...corsHeaders,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ error: 'Prompt is required' })
@@ -45,7 +56,7 @@ sorexports.handler = async (event, context) => {
             return {
                 statusCode: 400,
                 headers: {
-                    'Access-Control-Allow-Origin': '*',
+                    ...corsHeaders,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ error: 'Number of songs must be between 5 and 50' })
@@ -59,7 +70,7 @@ sorexports.handler = async (event, context) => {
             return {
                 statusCode: 500,
                 headers: {
-                    'Access-Control-Allow-Origin': '*',
+                    ...corsHeaders,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ error: 'x.ai API key not configured' })
@@ -85,6 +96,8 @@ sorexports.handler = async (event, context) => {
             temperature: 0.7
         };
 
+        console.log('Making API call to x.ai with request body:', JSON.stringify(requestBody, null, 2));
+
         const response = await fetch(xaiUrl, {
             method: 'POST',
             headers: {
@@ -94,11 +107,22 @@ sorexports.handler = async (event, context) => {
             body: JSON.stringify(requestBody)
         });
 
+        console.log('x.ai API response status:', response.status);
+        console.log('x.ai API response headers:', Object.fromEntries(response.headers.entries()));
+
         if (!response.ok) {
-            throw new Error(`x.ai API error: ${response.status} ${response.statusText}`);
+            const errorText = await response.text();
+            console.error('x.ai API error response:', errorText);
+            throw new Error(`x.ai API error: ${response.status} ${response.statusText} - ${errorText}`);
         }
 
         const xaiResponse = await response.json();
+        console.log('x.ai API response data:', JSON.stringify(xaiResponse, null, 2));
+        
+        // validate response structure
+        if (!xaiResponse.choices || !xaiResponse.choices[0] || !xaiResponse.choices[0].message) {
+            throw new Error('Invalid response structure from x.ai API');
+        }
         
         // format response
         const neuralBardResponse = {
@@ -109,14 +133,14 @@ sorexports.handler = async (event, context) => {
                 message: "The Neural Bard has spoken...",
                 status: "divination_complete",
                 tokens_used: xaiResponse.usage?.total_tokens || 0,
-                model_used: xaiResponse.model || "grok-4-latest"
+                model_used: xaiResponse.model || "grok-3-fast"
             }
         };
 
         return {
             statusCode: 200,
             headers: {
-                'Access-Control-Allow-Origin': '*',
+                ...corsHeaders,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(neuralBardResponse)
@@ -124,16 +148,20 @@ sorexports.handler = async (event, context) => {
 
     } catch (error) {
         console.error('Neural Bard error:', error);
+        console.error('Error stack:', error.stack);
+        console.error('Request body:', event.body);
         
         return {
             statusCode: 500,
             headers: {
-                'Access-Control-Allow-Origin': '*',
+                ...corsHeaders,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ 
                 error: 'The Neural Bard encountered a mystical error...',
-                details: error.message
+                details: error.message,
+                stack: error.stack,
+                requestBody: event.body
             })
         };
     }
