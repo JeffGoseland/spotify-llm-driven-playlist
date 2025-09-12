@@ -1,4 +1,5 @@
 exports.handler = async (event, context) => {
+    // Force rebuild - v2
     // Log the request for debugging
     console.log('Neural Bard function called:', {
         method: event.httpMethod,
