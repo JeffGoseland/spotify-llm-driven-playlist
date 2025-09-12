@@ -1,5 +1,4 @@
 // neural bard - groq api integration for spotify playlist generation
-const Groq = require('groq-sdk');
 
 // rate limiting storage (in production, use Redis or database)
 const rateLimit = new Map();
@@ -219,12 +218,13 @@ exports.handler = async (event, context) => {
 
 // call groq api with neural bard personality
 async function callGroqAPI(prompt, apiKey) {
-    const groq = new Groq({ apiKey: apiKey });
+    const groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
     
     // neural bard system prompt
     const systemPrompt = `You are the Neural Bard, a mystical AI that specializes in music curation and playlist generation. You speak in a mystical, tech-savvy manner about music and algorithms. You have deep knowledge of music genres, artists, and audio features. When users ask for playlists, provide creative, detailed responses about the music they should listen to, including specific artists, songs, and the reasoning behind your recommendations. Always maintain your mystical, algorithmic personality while being helpful and informative about music.`;
 
-    const chatCompletion = await groq.chat.completions.create({
+    const requestBody = {
+        model: "llama3-8b-8192",
         messages: [
             {
                 role: "system",
@@ -235,10 +235,22 @@ async function callGroqAPI(prompt, apiKey) {
                 content: prompt
             }
         ],
-        model: "llama3-8b-8192", // Using a cost-effective Groq model
         temperature: 0.7,
         max_tokens: 1000
+    };
+
+    const response = await fetch(groqUrl, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
     });
 
-    return chatCompletion;
+    if (!response.ok) {
+        throw new Error(`Groq API error: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
 }
