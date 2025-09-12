@@ -1,34 +1,21 @@
 /* neural bard - spotify llm playlist generator styles */
 
-/* Universal black background reset */
-* {
-    background-color: inherit;
-}
-
-html, body {
-    background-color: #000000 !important;
-    min-height: 100vh;
+/* Simple black background approach */
+html {
+    background-color: #000000;
 }
 
 body {
+    background-color: #000000;
     color: #ffffff;
     font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
 }
 
-/* Override Bootstrap's default white backgrounds */
-.container, .container-fluid, .row, .col, .col-md-8, .col-12 {
-    background-color: transparent !important;
-}
-
-/* Override any Bootstrap background utilities */
+/* Override Bootstrap background utilities */
 .bg-white, .bg-light {
-    background-color: #000000 !important;
-}
-
-/* Ensure main content area is black */
-body > .container {
     background-color: #000000 !important;
 }
 
@@ -113,15 +100,66 @@ body > .container {
 }
 
 .alert-info {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+    background-color: #1a1a1a;
+    border: 1px solid #1db954;
     color: #ffffff;
+    border-radius: 8px;
 }
 
 .alert-success {
     background-color: #1db954;
     border-color: #1db954;
     color: #ffffff;
+}
+
+.alert-warning {
+    background-color: #1a1a1a;
+    border: 1px solid #ffc107;
+    color: #ffffff;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    animation: error-pulse 2s ease-in-out infinite;
+}
+
+/* Pulsing blue/white fuzzy border effect */
+.alert-warning::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #007bff, #ffffff, #007bff, #ffffff);
+    background-size: 400% 400%;
+    border-radius: 10px;
+    z-index: -1;
+    animation: error-fuzzy-border 1.5s ease-in-out infinite;
+    filter: blur(3px);
+}
+
+@keyframes error-pulse {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
+    }
+    50% { 
+        box-shadow: 0 0 0 8px rgba(0, 123, 255, 0.1);
+    }
+}
+
+@keyframes error-fuzzy-border {
+    0% { 
+        background-position: 0% 50%;
+        opacity: 0.8;
+    }
+    50% { 
+        background-position: 100% 50%;
+        opacity: 1;
+    }
+    100% { 
+        background-position: 0% 50%;
+        opacity: 0.8;
+    }
 }
 
 /* Enhanced Neural Bard Loading Animations */
@@ -339,6 +377,26 @@ body > .container {
 /* Song List Styling */
 .song-list-container {
     margin-top: 10px;
+}
+
+/* Bard Response Styling - matches song list */
+.bard-response-textarea {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    background-color: #1a1a1a;
+    border: 1px solid #1db954;
+    color: #ffffff;
+    resize: vertical;
+    min-height: 100px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.bard-response-textarea:focus {
+    border-color: #1ed760;
+    box-shadow: 0 0 0 0.2rem rgba(29, 185, 84, 0.25);
+    outline: none;
 }
 
 .song-list-textarea {

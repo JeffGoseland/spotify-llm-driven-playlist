@@ -46,18 +46,7 @@ async function sendToNeuralBard() {
     }
 }
 
-// generate mystical response from neural bard
-function generateNeuralBardResponse(prompt) {
-    const responses = [
-        `The Neural Bard divines: "${prompt}" - A most intriguing musical query...`,
-        `Binary whispers from the Neural Bard: "${prompt}" - The algorithm speaks of harmonies yet to be born...`,
-        `The Neural Bard's digital oracle responds: "${prompt}" - Behold, the musical matrix reveals its secrets...`,
-        `Neural Bard prophecy: "${prompt}" - The code has spoken, the playlist shall be forged...`,
-        `The Neural Bard's mystical algorithm declares: "${prompt}" - Your musical destiny awaits in the digital realm...`
-    ];
-    
-    return responses[Math.floor(Math.random() * responses.length)];
-}
+// Removed unused generateNeuralBardResponse function
 
 // display received data from neural bard
 function displayNeuralBardData(data) {
@@ -68,9 +57,9 @@ function displayNeuralBardData(data) {
     const songs = extractSongsFromResponse(data.response);
     
     dataResults.innerHTML = `
-        <div class="alert alert-info neural-bard-glow">
+        <div class="alert alert-info">
             <h6><i class="fas fa-robot me-2"></i>Neural Bard Response</h6>
-            <p class="mb-0">${data.response}</p>
+            <textarea class="bard-response-textarea" rows="8" readonly>${data.response}</textarea>
         </div>
         
         ${songs.length > 0 ? `
@@ -192,27 +181,12 @@ function downloadSongList() {
     }
 }
 
-// show neural bard loading modal with enhanced animations
+// show neural bard loading modal with simplified animations
 function showNeuralBardLoading() {
     const loadingModal = new bootstrap.Modal(document.getElementById('neuralBardLoadingModal'));
     
-    // update loading messages dynamically
-    const loadingMessages = [
-        "The Neural Bard is divining...",
-        "Consulting the digital oracle...",
-        "Processing musical frequencies...",
-        "Weaving sonic algorithms...",
-        "Channeling mystical data streams...",
-        "The algorithm speaks to the music...",
-        "Divining your perfect playlist...",
-        "Neural networks are harmonizing..."
-    ];
-    
-    let messageIndex = 0;
-    const messageElement = document.querySelector('#neuralBardLoadingModal h5');
-    const progressElement = document.querySelector('#neuralBardLoadingModal .progress');
-    
     // create progress bar if it doesn't exist
+    const progressElement = document.querySelector('#neuralBardLoadingModal .progress');
     if (!progressElement) {
         const modalBody = document.querySelector('#neuralBardLoadingModal .modal-body');
         const progressHtml = `
@@ -233,15 +207,8 @@ function showNeuralBardLoading() {
         progressBar.style.width = progress + '%';
     }, 200);
     
-    // cycle through loading messages
-    const messageInterval = setInterval(() => {
-        messageIndex = (messageIndex + 1) % loadingMessages.length;
-        messageElement.textContent = loadingMessages[messageIndex];
-    }, 1500);
-    
-    // store intervals for cleanup
+    // store interval for cleanup
     loadingModal._progressInterval = progressInterval;
-    loadingModal._messageInterval = messageInterval;
     
     loadingModal.show();
 }
@@ -257,18 +224,9 @@ function hideNeuralBardLoading() {
             progressBar.classList.add('bg-success');
         }
         
-        // show completion message briefly
-        const messageElement = document.querySelector('#neuralBardLoadingModal h5');
-        const originalMessage = messageElement.textContent;
-        messageElement.textContent = "Divination complete! The Neural Bard has spoken...";
-        messageElement.classList.add('text-success');
-        
         // clean up intervals
         if (loadingModal._progressInterval) {
             clearInterval(loadingModal._progressInterval);
-        }
-        if (loadingModal._messageInterval) {
-            clearInterval(loadingModal._messageInterval);
         }
         
         // hide modal after brief delay
@@ -279,8 +237,6 @@ function hideNeuralBardLoading() {
                 progressBar.style.width = '0%';
                 progressBar.classList.remove('bg-success');
             }
-            messageElement.textContent = originalMessage;
-            messageElement.classList.remove('text-success');
         }, 800);
     }
 }
