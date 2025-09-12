@@ -1,4 +1,4 @@
-exports.handler = async (event, context) => {
+sorexports.handler = async (event, context) => {
     // handle cors preflight requests
     if (event.httpMethod === 'OPTIONS') {
         return {

@@ -143,22 +143,16 @@ body {
         box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
     }
     50% { 
-        box-shadow: 0 0 0 8px rgba(0, 123, 255, 0.1);
+        box-shadow: 0 0 0 6px rgba(0, 123, 255, 0.1);
     }
 }
 
 @keyframes error-fuzzy-border {
-    0% { 
+    0%, 100% { 
         background-position: 0% 50%;
-        opacity: 0.8;
     }
     50% { 
         background-position: 100% 50%;
-        opacity: 1;
-    }
-    100% { 
-        background-position: 0% 50%;
-        opacity: 0.8;
     }
 }
 
@@ -193,21 +187,9 @@ body {
     }
 }
 
-/* Neural Network Connection Lines */
-.neural-bard-loading::before {
-    content: '';
-    position: absolute;
-    top: -25px;
-    left: 50%;
-    width: 2px;
-    height: 20px;
-    background: linear-gradient(to bottom, transparent, #1db954, transparent);
-    transform: translateX(-50%) rotate(45deg);
-    animation: neural-connection 1.5s ease-in-out infinite;
-    animation-delay: 0s;
-}
+/* Neural Network Connection Lines - Top line removed to make room for heartbeat spike */
 
-/* Heartbeat Line Across Middle - Enhanced */
+/* Heartbeat Line Across Middle - Enhanced with Monitor Spike */
 .neural-bard-loading::after {
     content: '';
     position: absolute;
@@ -220,6 +202,22 @@ body {
     animation: neural-heartbeat 1.5s ease-in-out infinite;
     z-index: 1;
     border-radius: 2px;
+}
+
+/* Moving spike like a heartbeat monitor - using container */
+.neural-bard-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 2px;
+    height: 28px; /* 40% taller (20px * 1.4 = 28px) */
+    background: linear-gradient(to bottom, transparent, #1db954, #1ed760, #1db954, transparent);
+    transform: translateY(-50%);
+    animation: heartbeat-spike 1.5s linear infinite;
+    z-index: 2;
+    border-radius: 1px;
+    box-shadow: 0 0 8px rgba(29, 185, 84, 0.6);
 }
 
 @keyframes neural-heartbeat {
@@ -238,6 +236,23 @@ body {
     75% { 
         opacity: 1;
         transform: translate(-50%, -50%) scaleX(1.2);
+    }
+}
+
+@keyframes heartbeat-spike {
+    0% { 
+        left: 0;
+        opacity: 0;
+    }
+    20% { 
+        opacity: 1;
+    }
+    80% { 
+        opacity: 0.3;
+    }
+    100% { 
+        left: 100%;
+        opacity: 0;
     }
 }
 
@@ -277,16 +292,7 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Neural Bard Glow Effects */
-.neural-bard-glow {
-    animation: neural-bard-glow 3s ease-in-out infinite;
-}
-
-@keyframes neural-bard-glow {
-    0% { box-shadow: 0 0 5px rgba(29, 185, 84, 0.3); }
-    50% { box-shadow: 0 0 20px rgba(29, 185, 84, 0.6); }
-    100% { box-shadow: 0 0 5px rgba(29, 185, 84, 0.3); }
-}
+/* Removed duplicate glow effects - using simplified version below */
 
 /* Loading Modal Enhancements */
 #neuralBardLoadingModal .modal-content {
@@ -309,63 +315,9 @@ body {
     color: #b3b3b3 !important;
 }
 
-/* Additional Neural Network Effects */
+/* Simplified loading effects */
 .neural-bard-loading {
     background: radial-gradient(circle, rgba(29, 185, 84, 0.1) 0%, transparent 70%);
-}
-
-/* Floating Neural Particles */
-#neuralBardLoadingModal::before {
-    content: '';
-    position: absolute;
-    top: 20%;
-    left: 10%;
-    width: 4px;
-    height: 4px;
-    background: #1db954;
-    border-radius: 50%;
-    animation: neural-particle 3s ease-in-out infinite;
-    opacity: 0.6;
-}
-
-#neuralBardLoadingModal::after {
-    content: '';
-    position: absolute;
-    top: 60%;
-    right: 15%;
-    width: 3px;
-    height: 3px;
-    background: #1ed760;
-    border-radius: 50%;
-    animation: neural-particle 2.5s ease-in-out infinite reverse;
-    opacity: 0.4;
-}
-
-@keyframes neural-particle {
-    0%, 100% { 
-        transform: translateY(0px) scale(1);
-        opacity: 0.6;
-    }
-    50% { 
-        transform: translateY(-20px) scale(1.5);
-        opacity: 1;
-    }
-}
-
-/* Neural Bard Text Glow */
-#neuralBardLoadingModal h5 {
-    background: linear-gradient(45deg, #1db954, #1ed760, #1db954);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: neural-text-shimmer 2s ease-in-out infinite;
-}
-
-@keyframes neural-text-shimmer {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
 }
 
 .list-group-item {
@@ -453,18 +405,15 @@ pre {
     border-radius: 8px;
 }
 
-/* neural bard mystical effects */
+/* Neural Bard Effects */
 .neural-bard-glow {
     text-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
 }
 
 .mystical-border {
-    border: 2px solid transparent;
-    background: linear-gradient(45deg, #1db954, #1ed760, #1db954) border-box;
+    border: 2px solid #1db954;
     border-radius: 12px;
 }
-
-/* Removed duplicate neural-bard-loading definition - using the main one above */
 
 /* responsive design */
 @media (max-width: 768px) {

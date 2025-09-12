@@ -19,8 +19,8 @@ async function sendToNeuralBard() {
     showNeuralBardLoading();
 
     try {
-        // call neural bard api
-        const response = await fetch('/api/neural-bard', {
+        // call neural bard api (remote Netlify function)
+        const response = await fetch('https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -181,63 +181,17 @@ function downloadSongList() {
     }
 }
 
-// show neural bard loading modal with simplified animations
+// show neural bard loading modal
 function showNeuralBardLoading() {
     const loadingModal = new bootstrap.Modal(document.getElementById('neuralBardLoadingModal'));
-    
-    // create progress bar if it doesn't exist
-    const progressElement = document.querySelector('#neuralBardLoadingModal .progress');
-    if (!progressElement) {
-        const modalBody = document.querySelector('#neuralBardLoadingModal .modal-body');
-        const progressHtml = `
-            <div class="progress mb-3" style="height: 6px;">
-                <div class="progress-bar progress-bar-striped progress-bar-animated neural-bard-progress" 
-                     role="progressbar" style="width: 0%"></div>
-            </div>
-        `;
-        modalBody.insertAdjacentHTML('beforeend', progressHtml);
-    }
-    
-    // animate progress bar
-    const progressBar = document.querySelector('.neural-bard-progress');
-    let progress = 0;
-    const progressInterval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress > 90) progress = 90; // don't complete until response
-        progressBar.style.width = progress + '%';
-    }, 200);
-    
-    // store interval for cleanup
-    loadingModal._progressInterval = progressInterval;
-    
     loadingModal.show();
 }
 
-// hide neural bard loading modal with completion animation
+// hide neural bard loading modal
 function hideNeuralBardLoading() {
     const loadingModal = bootstrap.Modal.getInstance(document.getElementById('neuralBardLoadingModal'));
     if (loadingModal) {
-        // complete the progress bar
-        const progressBar = document.querySelector('.neural-bard-progress');
-        if (progressBar) {
-            progressBar.style.width = '100%';
-            progressBar.classList.add('bg-success');
-        }
-        
-        // clean up intervals
-        if (loadingModal._progressInterval) {
-            clearInterval(loadingModal._progressInterval);
-        }
-        
-        // hide modal after brief delay
-        setTimeout(() => {
-            loadingModal.hide();
-            // reset for next time
-            if (progressBar) {
-                progressBar.style.width = '0%';
-                progressBar.classList.remove('bg-success');
-            }
-        }, 800);
+        loadingModal.hide();
     }
 }
 
@@ -251,18 +205,8 @@ function showNeuralBardMessage(message, type = 'info') {
         </div>
     `;
     
-    // insert at top of main content
     const mainContent = document.querySelector('.container.mt-5');
     mainContent.insertAdjacentHTML('afterbegin', messageHtml);
-    
-    // auto-dismiss after 5 seconds
-    setTimeout(() => {
-        const alert = mainContent.querySelector('.alert');
-        if (alert) {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        }
-    }, 5000);
 }
 
 // initialize neural bard interface
