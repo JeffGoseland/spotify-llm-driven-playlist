@@ -24,6 +24,10 @@ async function sendToNeuralBard() {
         const apiUrl = isLocalDev 
             ? 'http://localhost:3002/api/neural-bard'  // Local mock server
             : 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard';  // Direct call
+        
+        console.log('Using API URL:', apiUrl);
+        console.log('Hostname:', window.location.hostname);
+        console.log('Is local dev:', isLocalDev);
             
         const response = await fetch(apiUrl, {
             method: 'POST',
