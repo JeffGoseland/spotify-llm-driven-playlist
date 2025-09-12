@@ -1,6 +1,12 @@
 [build]
   publish = "."
 
+# API routes - handle functions first
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
 # SPA routing - redirect all other routes to index.html
 [[redirects]]
   from = "/*"
