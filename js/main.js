@@ -3,9 +3,15 @@
 // send prompt to neural bard and display response
 async function sendToNeuralBard() {
     const prompt = document.getElementById('neuralBardPrompt').value.trim();
+    const numberOfSongs = document.getElementById('numberOfSongs').value;
     
     if (!prompt) {
         showNeuralBardMessage('The Neural Bard requires a prompt to divine your musical future...', 'warning');
+        return;
+    }
+
+    if (!numberOfSongs || numberOfSongs < 5 || numberOfSongs > 50) {
+        showNeuralBardMessage('The Neural Bard can only divine between 5 and 50 songs...', 'warning');
         return;
     }
 
@@ -19,7 +25,10 @@ async function sendToNeuralBard() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ prompt: prompt })
+            body: JSON.stringify({ 
+                prompt: prompt,
+                numberOfSongs: parseInt(numberOfSongs)
+            })
         });
 
         if (!response.ok) {
@@ -82,17 +91,96 @@ function displayNeuralBardData(data) {
     dataSection.scrollIntoView({ behavior: 'smooth' });
 }
 
-// show neural bard loading modal
+// show neural bard loading modal with enhanced animations
 function showNeuralBardLoading() {
     const loadingModal = new bootstrap.Modal(document.getElementById('neuralBardLoadingModal'));
+    
+    // update loading messages dynamically
+    const loadingMessages = [
+        "The Neural Bard is divining...",
+        "Consulting the digital oracle...",
+        "Processing musical frequencies...",
+        "Weaving sonic algorithms...",
+        "Channeling mystical data streams...",
+        "The algorithm speaks to the music...",
+        "Divining your perfect playlist...",
+        "Neural networks are harmonizing..."
+    ];
+    
+    let messageIndex = 0;
+    const messageElement = document.querySelector('#neuralBardLoadingModal h5');
+    const progressElement = document.querySelector('#neuralBardLoadingModal .progress');
+    
+    // create progress bar if it doesn't exist
+    if (!progressElement) {
+        const modalBody = document.querySelector('#neuralBardLoadingModal .modal-body');
+        const progressHtml = `
+            <div class="progress mb-3" style="height: 6px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated neural-bard-progress" 
+                     role="progressbar" style="width: 0%"></div>
+            </div>
+        `;
+        modalBody.insertAdjacentHTML('beforeend', progressHtml);
+    }
+    
+    // animate progress bar
+    const progressBar = document.querySelector('.neural-bard-progress');
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 90) progress = 90; // don't complete until response
+        progressBar.style.width = progress + '%';
+    }, 200);
+    
+    // cycle through loading messages
+    const messageInterval = setInterval(() => {
+        messageIndex = (messageIndex + 1) % loadingMessages.length;
+        messageElement.textContent = loadingMessages[messageIndex];
+    }, 1500);
+    
+    // store intervals for cleanup
+    loadingModal._progressInterval = progressInterval;
+    loadingModal._messageInterval = messageInterval;
+    
     loadingModal.show();
 }
 
-// hide neural bard loading modal
+// hide neural bard loading modal with completion animation
 function hideNeuralBardLoading() {
     const loadingModal = bootstrap.Modal.getInstance(document.getElementById('neuralBardLoadingModal'));
     if (loadingModal) {
-        loadingModal.hide();
+        // complete the progress bar
+        const progressBar = document.querySelector('.neural-bard-progress');
+        if (progressBar) {
+            progressBar.style.width = '100%';
+            progressBar.classList.add('bg-success');
+        }
+        
+        // show completion message briefly
+        const messageElement = document.querySelector('#neuralBardLoadingModal h5');
+        const originalMessage = messageElement.textContent;
+        messageElement.textContent = "Divination complete! The Neural Bard has spoken...";
+        messageElement.classList.add('text-success');
+        
+        // clean up intervals
+        if (loadingModal._progressInterval) {
+            clearInterval(loadingModal._progressInterval);
+        }
+        if (loadingModal._messageInterval) {
+            clearInterval(loadingModal._messageInterval);
+        }
+        
+        // hide modal after brief delay
+        setTimeout(() => {
+            loadingModal.hide();
+            // reset for next time
+            if (progressBar) {
+                progressBar.style.width = '0%';
+                progressBar.classList.remove('bg-success');
+            }
+            messageElement.textContent = originalMessage;
+            messageElement.classList.remove('text-success');
+        }, 800);
     }
 }
 

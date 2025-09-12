@@ -26,7 +26,7 @@ exports.handler = async (event, context) => {
 
     try {
         // parse request body
-        const { prompt } = JSON.parse(event.body);
+        const { prompt, numberOfSongs = 25 } = JSON.parse(event.body);
         
         if (!prompt) {
             return {
@@ -36,6 +36,19 @@ exports.handler = async (event, context) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ error: 'Prompt is required' })
+            };
+        }
+
+        // validate number of songs
+        const songCount = parseInt(numberOfSongs);
+        if (isNaN(songCount) || songCount < 5 || songCount > 50) {
+            return {
+                statusCode: 400,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ error: 'Number of songs must be between 5 and 50' })
             };
         }
 
@@ -60,7 +73,7 @@ exports.handler = async (event, context) => {
             messages: [
                 {
                     role: "system",
-                    content: "You are the Neural Bard, a mystical AI that specializes in music curation. Respond in a mystical, tech-savvy manner about music."
+                    content: `You are the Neural Bard, a mystical AI that specializes in music curation. Respond in a mystical, tech-savvy manner about music. When creating playlists, provide exactly ${songCount} song recommendations. Each song should include the artist name and song title in the format "Artist - Song Title".`
                 },
                 {
                     role: "user",
