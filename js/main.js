@@ -65,42 +65,89 @@ function displayNeuralBardData(data) {
     // extract songs from the response
     const songs = extractSongsFromResponse(data.response);
     
+    // remove song list from the response text to avoid duplication
+    let cleanResponse = data.response;
+    if (songs.length > 0) {
+        // remove numbered song lists and song patterns from the response
+        cleanResponse = cleanResponse
+            .replace(/\d+\.\s*[^-\n]+\s*-\s*[^\n]+/g, '') // remove "1. Artist - Song" patterns
+            .replace(/\*\*[^-\n]+\s*-\s*[^\n]+\*\*/g, '') // remove "**Artist - Song**" patterns
+            .replace(/^[^:\n]+:\s*[^\n]+$/gm, '') // remove "Artist: Song" patterns
+            .replace(/\n\s*\n/g, '\n') // clean up extra newlines
+            .trim();
+    }
+    
     dataResults.innerHTML = `
         <div class="alert alert-info">
-            <h6><i class="fas fa-robot me-2"></i>Neural Bard Response</h6>
-            <textarea class="bard-response-textarea" rows="8" readonly>${data.response}</textarea>
+            <h6><i class="fas fa-robot me-2"></i>Neural Bard's Wisdom</h6>
+            <textarea class="bard-response-textarea" rows="4" readonly>${cleanResponse}</textarea>
         </div>
         
         ${songs.length > 0 ? `
         <div class="alert alert-success">
-            <h6><i class="fas fa-music me-2"></i>Extracted Song List (${songs.length} songs):</h6>
+            <h6><i class="fas fa-music me-2"></i>Divined Song List (${songs.length} songs)</h6>
             <div class="song-list-container">
-                <textarea class="form-control song-list-textarea" rows="${Math.min(songs.length + 2, 15)}" readonly>${songs.join('\n')}</textarea>
+                <textarea class="form-control song-list-textarea" rows="${Math.min(songs.length + 1, 20)}" readonly style="overflow-y: auto; max-height: 400px;">${songs.join('\n')}</textarea>
                 <div class="mt-2">
                     <button class="btn btn-sm btn-outline-success" onclick="copySongList()">
                         <i class="fas fa-copy me-1"></i>Copy Song List
                     </button>
-                    <button class="btn btn-sm btn-outline-info" onclick="downloadSongList()">
+                    <button class="btn btn-sm btn-success" onclick="downloadSongList()">
                         <i class="fas fa-download me-1"></i>Download as TXT
                     </button>
                 </div>
             </div>
         </div>
-        ` : ''}
+        ` : `
+        <div class="alert alert-warning">
+            <h6><i class="fas fa-exclamation-triangle me-2"></i>No Songs Detected</h6>
+            <p class="mb-0">The Neural Bard's response didn't contain recognizable song patterns.</p>
+        </div>
+        `}
         
         <div class="row">
             <div class="col-md-6">
-                <h6><i class="fas fa-code me-2"></i>Raw Neural Data:</h6>
-                <pre class="bg-light p-3 rounded"><code>${JSON.stringify(data, null, 2)}</code></pre>
+                <div class="alert alert-light">
+                    <h6 class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-magic me-2"></i>Bard Metadata</span>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="toggleMetadata()" id="metadataToggle">
+                            <i class="fas fa-chevron-down" id="metadataIcon"></i>
+                        </button>
+                    </h6>
+                    <div id="metadataContent" style="display: none;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Status:</span>
+                                <span class="badge bg-primary">${data.bardData.status}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Tokens Used:</span>
+                                <span class="badge bg-info">${data.bardData.tokens_used}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Model:</span>
+                                <span class="badge bg-secondary">${data.bardData.model_used}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Timestamp:</span>
+                                <small class="text-muted">${data.timestamp}</small>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
-                <h6><i class="fas fa-magic me-2"></i>Bard Metadata:</h6>
-                <ul class="list-group">
-                    <li class="list-group-item">Timestamp: ${data.timestamp}</li>
-                    <li class="list-group-item">Status: ${data.bardData.status}</li>
-                    <li class="list-group-item">Tokens Used: ${data.bardData.tokens_used}</li>
-                    <li class="list-group-item">Model: ${data.bardData.model_used}</li>
-                </ul>
+                <div class="alert alert-dark">
+                    <h6 class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-code me-2"></i>Raw Neural Data</span>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="toggleRawData()" id="rawDataToggle">
+                            <i class="fas fa-chevron-down" id="rawDataIcon"></i>
+                        </button>
+                    </h6>
+                    <div id="rawDataContent" style="display: none;">
+                        <pre class="bg-light p-3 rounded mb-0" style="max-height: 200px; overflow-y: auto;"><code>${JSON.stringify(data, null, 2)}</code></pre>
+                    </div>
+                </div>
             </div>
         </div>
     `;
@@ -216,6 +263,33 @@ function showNeuralBardMessage(message, type = 'info') {
     
     const mainContent = document.querySelector('.container.mt-5');
     mainContent.insertAdjacentHTML('afterbegin', messageHtml);
+}
+
+// toggle functions for collapsible sections
+function toggleMetadata() {
+    const content = document.getElementById('metadataContent');
+    const icon = document.getElementById('metadataIcon');
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.className = 'fas fa-chevron-up';
+    } else {
+        content.style.display = 'none';
+        icon.className = 'fas fa-chevron-down';
+    }
+}
+
+function toggleRawData() {
+    const content = document.getElementById('rawDataContent');
+    const icon = document.getElementById('rawDataIcon');
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.className = 'fas fa-chevron-up';
+    } else {
+        content.style.display = 'none';
+        icon.className = 'fas fa-chevron-down';
+    }
 }
 
 // initialize neural bard interface
