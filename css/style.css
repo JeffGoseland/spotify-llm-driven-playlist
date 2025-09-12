@@ -1,9 +1,35 @@
-the cir of  the cir/* neural bard - spotify llm playlist generator styles */
+/* neural bard - spotify llm playlist generator styles */
+
+/* Universal black background reset */
+* {
+    background-color: inherit;
+}
+
+html, body {
+    background-color: #000000 !important;
+    min-height: 100vh;
+}
 
 body {
-    background-color: #191414;
     color: #ffffff;
     font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Override Bootstrap's default white backgrounds */
+.container, .container-fluid, .row, .col, .col-md-8, .col-12 {
+    background-color: transparent !important;
+}
+
+/* Override any Bootstrap background utilities */
+.bg-white, .bg-light {
+    background-color: #000000 !important;
+}
+
+/* Ensure main content area is black */
+body > .container {
+    background-color: #000000 !important;
 }
 
 .hero-section {
@@ -111,9 +137,17 @@ body {
         box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.7);
         transform: scale(1);
     }
-    70% { 
-        box-shadow: 0 0 0 15px rgba(29, 185, 84, 0);
+    25% { 
+        box-shadow: 0 0 0 8px rgba(29, 185, 84, 0.4);
+        transform: scale(1.05);
+    }
+    50% { 
+        box-shadow: 0 0 0 12px rgba(29, 185, 84, 0.2);
         transform: scale(1.1);
+    }
+    75% { 
+        box-shadow: 0 0 0 6px rgba(29, 185, 84, 0.3);
+        transform: scale(1.03);
     }
     100% { 
         box-shadow: 0 0 0 0 rgba(29, 185, 84, 0);
@@ -135,36 +169,37 @@ body {
     animation-delay: 0s;
 }
 
-/* Heartbeat Line Across Middle */
+/* Heartbeat Line Across Middle - Enhanced */
 .neural-bard-loading::after {
     content: '';
     position: absolute;
     top: 50%;
-    left: 0;
-    right: 0;
-    height: 2px;
+    left: 50%;
+    width: 140%; /* 40% larger than sphere */
+    height: 4px; /* Thicker for visibility */
     background: linear-gradient(90deg, transparent, #1db954, #1ed760, #1db954, transparent);
-    transform: translateY(-50%);
-    animation: neural-heartbeat 1.2s ease-in-out infinite;
+    transform: translate(-50%, -50%);
+    animation: neural-heartbeat 1.5s ease-in-out infinite;
     z-index: 1;
+    border-radius: 2px;
 }
 
 @keyframes neural-heartbeat {
     0%, 100% { 
-        opacity: 0.3;
-        transform: translateY(-50%) scaleX(0.8);
+        opacity: 0.2;
+        transform: translate(-50%, -50%) scaleX(0.6);
     }
     25% { 
         opacity: 1;
-        transform: translateY(-50%) scaleX(1.2);
+        transform: translate(-50%, -50%) scaleX(1.4);
     }
     50% { 
-        opacity: 0.6;
-        transform: translateY(-50%) scaleX(0.9);
+        opacity: 0.4;
+        transform: translate(-50%, -50%) scaleX(0.8);
     }
     75% { 
         opacity: 1;
-        transform: translateY(-50%) scaleX(1.1);
+        transform: translate(-50%, -50%) scaleX(1.2);
     }
 }
 
@@ -371,15 +406,7 @@ pre {
     border-radius: 12px;
 }
 
-/* loading animation for neural bard */
-.neural-bard-loading {
-    animation: neuralPulse 2s ease-in-out infinite;
-}
-
-@keyframes neuralPulse {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
-}
+/* Removed duplicate neural-bard-loading definition - using the main one above */
 
 /* responsive design */
 @media (max-width: 768px) {
