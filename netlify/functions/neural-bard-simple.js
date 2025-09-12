@@ -49,7 +49,7 @@ exports.handler = async (event, context) => {
                     'Access-Control-Allow-Origin': '*',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ error: 'Groq API key not configured' })
+                body: JSON.stringify({ error: 'x.ai API key not configured' })
             };
         }
 
