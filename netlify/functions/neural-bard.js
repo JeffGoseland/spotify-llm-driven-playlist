@@ -1,5 +1,85 @@
 // neural bard - groq api integration for spotify playlist generation
 
+// rate limiting storage (in production, use Redis or database)
+const rateLimit = new Map();
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const RATE_LIMIT_MAX = 10; // 10 requests per minute
+
+// request validation
+function validatePrompt(prompt) {
+    if (!prompt || typeof prompt !== 'string') {
+        return { valid: false, error: 'Prompt must be a non-empty string' };
+    }
+    
+    if (prompt.length > 1000) {
+        return { valid: false, error: 'Prompt too long (max 1000 characters)' };
+    }
+    
+    if (prompt.length < 3) {
+        return { valid: false, error: 'Prompt too short (min 3 characters)' };
+    }
+    
+    // check for potentially malicious content
+    const suspiciousPatterns = [
+        /<script/i,
+        /javascript:/i,
+        /on\w+\s*=/i,
+        /eval\s*\(/i,
+        /function\s*\(/i
+    ];
+    
+    for (const pattern of suspiciousPatterns) {
+        if (pattern.test(prompt)) {
+            return { valid: false, error: 'Invalid content detected' };
+        }
+    }
+    
+    return { valid: true };
+}
+
+// rate limiting check
+function checkRateLimit(clientIP) {
+    const now = Date.now();
+    const windowStart = now - RATE_LIMIT_WINDOW;
+    
+    if (!rateLimit.has(clientIP)) {
+        rateLimit.set(clientIP, []);
+    }
+    
+    const requests = rateLimit.get(clientIP);
+    
+    // remove old requests outside the window
+    const recentRequests = requests.filter(timestamp => timestamp > windowStart);
+    rateLimit.set(clientIP, recentRequests);
+    
+    if (recentRequests.length >= RATE_LIMIT_MAX) {
+        return { allowed: false, remaining: 0 };
+    }
+    
+    // add current request
+    recentRequests.push(now);
+    rateLimit.set(clientIP, recentRequests);
+    
+    return { 
+        allowed: true, 
+        remaining: RATE_LIMIT_MAX - recentRequests.length 
+    };
+}
+
+// log request for monitoring
+function logRequest(clientIP, prompt, response, error = null) {
+    const logEntry = {
+        timestamp: new Date().toISOString(),
+        clientIP: clientIP,
+        promptLength: prompt ? prompt.length : 0,
+        responseLength: response ? response.length : 0,
+        error: error ? error.message : null,
+        success: !error
+    };
+    
+    console.log('Neural Bard Request:', JSON.stringify(logEntry));
+}
+
 exports.handler = async (event, context) => {
     // handle cors preflight requests
     if (event.httpMethod === 'OPTIONS') {
@@ -27,17 +107,43 @@ exports.handler = async (event, context) => {
     }
 
     try {
+        // get client ip for rate limiting
+        const clientIP = event.headers['x-forwarded-for'] || 
+                        event.headers['x-real-ip'] || 
+                        'unknown';
+        
+        // check rate limit
+        const rateLimitCheck = checkRateLimit(clientIP);
+        if (!rateLimitCheck.allowed) {
+            logRequest(clientIP, null, null, new Error('Rate limit exceeded'));
+            return {
+                statusCode: 429,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json',
+                    'Retry-After': '60'
+                },
+                body: JSON.stringify({ 
+                    error: 'The Neural Bard is overwhelmed... Please try again later.',
+                    retryAfter: 60
+                })
+            };
+        }
+        
         // parse request body
         const { prompt } = JSON.parse(event.body);
         
-        if (!prompt) {
+        // validate prompt
+        const validation = validatePrompt(prompt);
+        if (!validation.valid) {
+            logRequest(clientIP, prompt, null, new Error(validation.error));
             return {
                 statusCode: 400,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ error: 'Prompt is required' })
+                body: JSON.stringify({ error: validation.error })
             };
         }
 
@@ -68,21 +174,33 @@ exports.handler = async (event, context) => {
                 status: "divination_complete",
                 tokens_used: groqResponse.usage?.total_tokens || 0,
                 mystical_confidence: 0.95,
-                model_used: groqResponse.model || "grok-3-mini"
+                model_used: groqResponse.model || "grok-3-mini",
+                rateLimitRemaining: rateLimitCheck.remaining
             }
         };
+
+        // log successful request
+        logRequest(clientIP, prompt, neuralBardResponse.response);
 
         return {
             statusCode: 200,
             headers: {
                 'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-RateLimit-Remaining': rateLimitCheck.remaining.toString(),
+                'X-RateLimit-Reset': new Date(Date.now() + RATE_LIMIT_WINDOW).toISOString()
             },
             body: JSON.stringify(neuralBardResponse)
         };
 
     } catch (error) {
         console.error('Neural Bard error:', error);
+        
+        // log error request
+        const clientIP = event.headers['x-forwarded-for'] || 
+                        event.headers['x-real-ip'] || 
+                        'unknown';
+        logRequest(clientIP, null, null, error);
         
         return {
             statusCode: 500,
@@ -92,7 +210,7 @@ exports.handler = async (event, context) => {
             },
             body: JSON.stringify({ 
                 error: 'The Neural Bard encountered a mystical error...',
-                details: error.message 
+                details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
             })
         };
     }
