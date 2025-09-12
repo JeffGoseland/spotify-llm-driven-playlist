@@ -4,12 +4,76 @@
   "description": "Neural Bard - Spotify LLM Playlist Generator",
   "main": "index.html",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "groq-sdk": "^0.7.0"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^9.3.4",
+    "@testing-library/jest-dom": "^6.1.4",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "puppeteer": "^21.5.2",
+    "supertest": "^6.3.3"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "echo 'Static site - no build needed'"
+    "build": "echo 'Static site - no build needed'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ui": "jest --testEnvironment=jsdom",
+    "test:integration": "jest --testPathPattern=integration"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/__tests__/setup.js"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.js",
+      "**/?(*.)+(spec|test).js"
+    ],
+    "collectCoverageFrom": [
+      "js/**/*.js",
+      "netlify/functions/**/*.js",
+      "!**/node_modules/**",
+      "!**/__tests__/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/coverage/"
+    ],
+    "projects": [
+      {
+        "displayName": "unit",
+        "testMatch": [
+          "<rootDir>/__tests__/unit/**/*.test.js"
+        ],
+        "testEnvironment": "node"
+      },
+      {
+        "displayName": "integration",
+        "testMatch": [
+          "<rootDir>/__tests__/integration/**/*.test.js"
+        ],
+        "testEnvironment": "node"
+      },
+      {
+        "displayName": "ui",
+        "testMatch": [
+          "<rootDir>/__tests__/ui/**/*.test.js"
+        ],
+        "testEnvironment": "jsdom"
+      }
+    ]
   }
 }

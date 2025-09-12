@@ -108,7 +108,7 @@ exports.handler = async (event, context) => {
         });
 
         console.log('x.ai API response status:', response.status);
-        console.log('x.ai API response headers:', Object.fromEntries(response.headers.entries()));
+        console.log('x.ai API response headers:', response.headers ? Object.fromEntries(response.headers.entries()) : 'No headers');
 
         if (!response.ok) {
             const errorText = await response.text();

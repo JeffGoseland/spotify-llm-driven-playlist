@@ -19,8 +19,13 @@ async function sendToNeuralBard() {
     showNeuralBardLoading();
 
     try {
-        // call neural bard api (remote Netlify function)
-        const response = await fetch('https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard', {
+        // call neural bard api - use mock server for local testing
+        const isLocalDev = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+        const apiUrl = isLocalDev 
+            ? 'http://localhost:3002/api/neural-bard'  // Local mock server
+            : 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard';  // Direct call
+            
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

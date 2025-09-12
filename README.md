@@ -12,7 +12,7 @@ A mystical AI-powered playlist generator that combines the wisdom of ancient soo
 
 ## 🚀 Live Demo
 
-Visit: https://spotify-llm-driven-playlist.netlify.app/
+Visit: <https://spotify-llm-driven-playlist.netlify.app/>
 
 ## 🎵 How It Works
 
@@ -39,6 +39,7 @@ Visit: https://spotify-llm-driven-playlist.netlify.app/
 ## 🎭 The Neural Bard Personality
 
 The Neural Bard combines:
+
 - **Pop culture nerd** sensibilities
 - **Edgy, dark humor** in responses
 - **Soothsayer** mystical language
