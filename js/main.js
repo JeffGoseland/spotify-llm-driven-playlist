@@ -1,7 +1,7 @@
 // neural bard - spotify llm playlist generator main script
 
 // send prompt to neural bard and display response
-function sendToNeuralBard() {
+async function sendToNeuralBard() {
     const prompt = document.getElementById('neuralBardPrompt').value.trim();
     
     if (!prompt) {
@@ -12,23 +12,29 @@ function sendToNeuralBard() {
     // show loading modal with neural bard personality
     showNeuralBardLoading();
 
-    // simulate neural bard response (replace with real api call)
-    setTimeout(() => {
-        const neuralBardResponse = {
-            prompt: prompt,
-            response: generateNeuralBardResponse(prompt),
-            timestamp: new Date().toISOString(),
-            bardData: {
-                message: "The Neural Bard has spoken...",
-                status: "divination_complete",
-                tokens_used: 150,
-                mystical_confidence: 0.95
-            }
-        };
+    try {
+        // call neural bard api
+        const response = await fetch('/api/neural-bard', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt: prompt })
+        });
 
+        if (!response.ok) {
+            throw new Error(`Neural Bard API error: ${response.status}`);
+        }
+
+        const neuralBardResponse = await response.json();
         displayNeuralBardData(neuralBardResponse);
+        
+    } catch (error) {
+        console.error('Neural Bard error:', error);
+        showNeuralBardMessage('The Neural Bard encountered a mystical error... Please try again.', 'warning');
+    } finally {
         hideNeuralBardLoading();
-    }, 2000); // 2 second delay to simulate neural processing
+    }
 }
 
 // generate mystical response from neural bard
