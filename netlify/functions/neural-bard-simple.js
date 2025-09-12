@@ -53,11 +53,11 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // call groq api with simple fetch
-        const groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
+        // call x.ai api with simple fetch
+        const xaiUrl = 'https://api.x.ai/v1/chat/completions';
         
         const requestBody = {
-            model: "llama3-8b-8192",
+            model: "grok-beta",
             messages: [
                 {
                     role: "system",
@@ -72,7 +72,7 @@ exports.handler = async (event, context) => {
             max_tokens: 500
         };
 
-        const response = await fetch(groqUrl, {
+        const response = await fetch(xaiUrl, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${groqApiKey}`,
@@ -82,21 +82,21 @@ exports.handler = async (event, context) => {
         });
 
         if (!response.ok) {
-            throw new Error(`Groq API error: ${response.status} ${response.statusText}`);
+            throw new Error(`x.ai API error: ${response.status} ${response.statusText}`);
         }
 
-        const groqResponse = await response.json();
+        const xaiResponse = await response.json();
         
         // format response
         const neuralBardResponse = {
             prompt: prompt,
-            response: groqResponse.choices[0].message.content,
+            response: xaiResponse.choices[0].message.content,
             timestamp: new Date().toISOString(),
             bardData: {
                 message: "The Neural Bard has spoken...",
                 status: "divination_complete",
-                tokens_used: groqResponse.usage?.total_tokens || 0,
-                model_used: groqResponse.model || "llama3-8b-8192"
+                tokens_used: xaiResponse.usage?.total_tokens || 0,
+                model_used: xaiResponse.model || "grok-beta"
             }
         };
 
