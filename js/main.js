@@ -9,14 +9,31 @@ function checkSpotifyConnection() {
     const expiresAt = localStorage.getItem('spotify_token_expires');
     
     if (accessToken && expiresAt && Date.now() < parseInt(expiresAt)) {
-        document.getElementById('connectSpotifyBtn').style.display = 'none';
-        document.getElementById('spotifyStatus').style.display = 'block';
+        // Hide connect button and show status
+        const connectBtn = document.getElementById('connectSpotifyBtn');
+        const statusDiv = document.getElementById('spotifyStatus');
+        const createPlaylistSection = document.getElementById('createPlaylistSection');
+        
+        if (connectBtn) connectBtn.style.display = 'none';
+        if (statusDiv) statusDiv.style.display = 'block';
+        if (createPlaylistSection) createPlaylistSection.style.display = 'block';
+        
         return true;
     } else {
         // Clear expired tokens
         localStorage.removeItem('spotify_access_token');
         localStorage.removeItem('spotify_refresh_token');
         localStorage.removeItem('spotify_token_expires');
+        
+        // Show connect button and hide status
+        const connectBtn = document.getElementById('connectSpotifyBtn');
+        const statusDiv = document.getElementById('spotifyStatus');
+        const createPlaylistSection = document.getElementById('createPlaylistSection');
+        
+        if (connectBtn) connectBtn.style.display = 'block';
+        if (statusDiv) statusDiv.style.display = 'none';
+        if (createPlaylistSection) createPlaylistSection.style.display = 'none';
+        
         return false;
     }
 }
@@ -39,6 +56,45 @@ function connectToSpotify() {
         `state=${state}`;
     
     window.location.href = authUrl;
+}
+
+// Create Spotify playlist from current results (new function for the results section)
+async function createSpotifyPlaylistFromResults() {
+    if (!window.currentSongs || !window.currentPrompt) {
+        console.error('No songs or prompt available');
+        showPlaylistCreationStatus('No playlist data available. Please generate a playlist first.', 'error');
+        return;
+    }
+    
+    try {
+        showPlaylistCreationStatus('Creating playlist on Spotify...', 'info');
+        
+        const result = await createSpotifyPlaylist(window.currentSongs, window.currentPrompt);
+        
+        if (result.success) {
+            showPlaylistCreationStatus(
+                `✅ Playlist created successfully! <a href="${result.playlist.external_urls.spotify}" target="_blank" class="alert-link">Open in Spotify</a>`,
+                'success'
+            );
+        } else {
+            showPlaylistCreationStatus(`❌ Failed to create playlist: ${result.error}`, 'error');
+        }
+    } catch (error) {
+        console.error('Playlist creation error:', error);
+        showPlaylistCreationStatus(`❌ Error creating playlist: ${error.message}`, 'error');
+    }
+}
+
+// Show playlist creation status in the new UI
+function showPlaylistCreationStatus(message, type = 'info') {
+    const statusDiv = document.getElementById('playlistCreationStatus');
+    if (!statusDiv) return;
+    
+    const alertClass = type === 'error' ? 'alert-danger' : 
+                     type === 'success' ? 'alert-success' : 'alert-info';
+    
+    statusDiv.innerHTML = `<div class="alert ${alertClass} mb-0">${message}</div>`;
+    statusDiv.style.display = 'block';
 }
 
 // Create playlist on Spotify
@@ -183,27 +239,38 @@ function displayNeuralBardData(data) {
             <p class="mb-0">The Neural Bard's response didn't contain recognizable song patterns.</p>
         </div>
         `}
-        
-        <div class="row">
-            <div class="col-md-6">
-                <div class="alert alert-light">
-                    <h6 class="d-flex justify-content-between align-items-center">
-                        <span><i class="fas fa-magic me-2"></i>Bard Metadata</span>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="toggleMetadata()" id="metadataToggle">
-                            <i class="fas fa-chevron-down" id="metadataIcon"></i>
-                        </button>
-                    </h6>
-                    <div id="metadataContent" style="display: none;">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Status:</span>
-                                <span class="badge bg-primary">${data.bardData.status}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Tokens Used:</span>
-                                <span class="badge bg-info">${data.bardData.tokens_used}</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between">
+    `;
+    
+    // Show the Spotify integration section after successful playlist generation
+    document.getElementById('spotifyIntegrationSection').style.display = 'block';
+    
+    // Store the current songs and prompt for later use
+    window.currentSongs = songs;
+    window.currentPrompt = data.prompt;
+    
+    // Check if user is already connected to Spotify
+    checkSpotifyConnection();
+    
+    // Add metadata section
+    dataResults.innerHTML += `
+        <div class="alert alert-light">
+            <h6 class="d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-magic me-2"></i>Bard Metadata</span>
+                <button class="btn btn-sm btn-outline-secondary" onclick="toggleMetadata()" id="metadataToggle">
+                    <i class="fas fa-chevron-down" id="metadataIcon"></i>
+                </button>
+            </h6>
+            <div id="metadataContent" style="display: none;">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Status:</span>
+                        <span class="badge bg-primary">${data.bardData.status}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tokens Used:</span>
+                        <span class="badge bg-info">${data.bardData.tokens_used}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
                                 <span>Model:</span>
                                 <span class="badge bg-secondary">${data.bardData.model_used}</span>
                             </li>

@@ -44,14 +44,6 @@
                             <div class="form-text">The Neural Bard can divine between 5 and 50 songs</div>
                         </div>
 
-                        <div class="mb-3">
-                            <button class="btn btn-outline-light w-100 mb-2" onclick="connectToSpotify()" id="connectSpotifyBtn">
-                                <i class="fab fa-spotify me-2"></i>Connect to Spotify
-                            </button>
-                            <div id="spotifyStatus" class="text-white small" style="display: none;">
-                                <i class="fas fa-check-circle me-2"></i>Connected to Spotify
-                            </div>
-                        </div>
                         
                         <button class="btn btn-success w-100" onclick="sendToNeuralBard()" id="consultBtn">
                             <i class="fas fa-magic me-2"></i>Consult the Neural Bard
@@ -71,6 +63,34 @@
                     <div class="card-body">
                         <div id="neuralBardDataResults">
                             <!-- Neural Bard data will be displayed here -->
+                        </div>
+                        
+                        <!-- Spotify Integration Section (hidden until playlist is generated) -->
+                        <div id="spotifyIntegrationSection" class="mt-4" style="display: none;">
+                            <hr class="my-4">
+                            <div class="text-center">
+                                <h6 class="text-muted mb-3">Create Your Playlist on Spotify</h6>
+                                
+                                <!-- Spotify Connection Status -->
+                                <div id="spotifyConnectionStatus" class="mb-3">
+                                    <button class="btn btn-outline-success" onclick="connectToSpotify()" id="connectSpotifyBtn">
+                                        <i class="fab fa-spotify me-2"></i>Connect to Spotify
+                                    </button>
+                                    <div id="spotifyStatus" class="text-success small mt-2" style="display: none;">
+                                        <i class="fas fa-check-circle me-2"></i>Connected to Spotify
+                                    </div>
+                                </div>
+                                
+                                <!-- Create Playlist Button (hidden until connected) -->
+                                <div id="createPlaylistSection" style="display: none;">
+                                    <button class="btn btn-success" onclick="createSpotifyPlaylistFromResults()" id="createPlaylistBtn">
+                                        <i class="fas fa-music me-2"></i>Create Playlist on Spotify
+                                    </button>
+                                    <div id="playlistCreationStatus" class="mt-2" style="display: none;">
+                                        <!-- Playlist creation status will appear here -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
