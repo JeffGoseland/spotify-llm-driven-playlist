@@ -6,6 +6,7 @@ A mystical AI-powered playlist generator that combines the wisdom of ancient soo
 
 - **Neural Bard Interface** - Mystical AI that speaks in a tech-savvy, poetic manner
 - **Natural Language Input** - Describe your perfect playlist in plain English
+- **Spotify Integration** - Real OAuth authentication and playlist creation
 - **x.ai Grok Integration** - Powered by Grok-3-fast for intelligent responses
 - **Security Features** - Rate limiting, input validation, and monitoring
 - **Netlify Deployment** - Serverless functions with automatic scaling
@@ -16,10 +17,12 @@ Visit: <https://spotify-llm-driven-playlist.netlify.app/>
 
 ## 🎵 How It Works
 
-1. **Speak to the Neural Bard** - Enter your musical desires in the mystical interface
-2. **Consult the Oracle** - The Neural Bard processes your request with AI magic
-3. **Receive Divination** - Get detailed playlist recommendations with track explanations
-4. **Channel the Music** - Use the recommendations on your preferred streaming platform
+1. **Connect to Spotify** - Authenticate with your Spotify account for playlist creation
+2. **Speak to the Neural Bard** - Enter your musical desires in the mystical interface
+3. **Consult the Oracle** - The Neural Bard processes your request with AI magic
+4. **Receive Divination** - Get detailed playlist recommendations with track explanations
+5. **Create on Spotify** - Your playlist is automatically created in your Spotify account
+6. **Enjoy the Magic** - Discover new music through the power of AI divination
 
 ## 🛠️ Tech Stack
 

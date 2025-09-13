@@ -1,9 +1,8 @@
 /**
- * Integration tests for API functionality
+ * Integration tests for API functionality (Mocked - No Real API Calls)
+ * These tests verify the integration flow without hitting external APIs
  */
 
-const request = require('supertest');
-const http = require('http');
 const handler = require('../../netlify/functions/neural-bard.js').handler;
 
 // Mock environment
@@ -12,13 +11,13 @@ process.env.GROQ_API_KEY = 'test-api-key';
 // Mock fetch for integration tests
 global.fetch = jest.fn();
 
-describe('API Integration Tests', () => {
+describe('API Integration Tests (Mocked)', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    describe('End-to-End API Flow', () => {
-        test('should handle complete request flow', async () => {
+    describe('End-to-End API Flow (Mocked)', () => {
+        test('should handle complete request flow with mocked API', async () => {
             const mockApiResponse = {
                 choices: [{ 
                     message: { 
@@ -74,8 +73,8 @@ describe('API Integration Tests', () => {
         });
     });
 
-    describe('Error Scenarios', () => {
-        test('should handle API timeout', async () => {
+    describe('Error Scenarios (Mocked)', () => {
+        test('should handle API timeout gracefully', async () => {
             global.fetch.mockRejectedValueOnce(new Error('Request timeout'));
 
             const event = {
@@ -95,7 +94,7 @@ describe('API Integration Tests', () => {
             expect(responseBody.details).toBe('Request timeout');
         });
 
-        test('should handle API rate limiting', async () => {
+        test('should handle API rate limiting gracefully', async () => {
             global.fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 429,
@@ -121,7 +120,7 @@ describe('API Integration Tests', () => {
         });
     });
 
-    describe('Performance Tests', () => {
+    describe('Performance Tests (Mocked)', () => {
         test('should handle large responses efficiently', async () => {
             const largeResponse = {
                 choices: [{ 

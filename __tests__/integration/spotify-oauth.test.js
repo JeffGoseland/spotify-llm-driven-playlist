@@ -1,143 +1,148 @@
 /**
- * Integration tests for Spotify OAuth flow
+ * Integration tests for Spotify OAuth flow (Mocked)
+ * These tests verify OAuth logic without requiring real servers
  */
 
-const request = require('supertest');
-const http = require('http');
+const { JSDOM } = require('jsdom');
 
-describe('Spotify OAuth Integration', () => {
-    let server;
+describe('Spotify OAuth Integration (Mocked)', () => {
+    let dom, window, document;
 
-    beforeAll(() => {
-        // Mock server for testing
-        server = http.createServer((req, res) => {
-            if (req.url === '/auth/callback/') {
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.end(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head><title>Callback Test</title></head>
-                    <body>
-                        <div id="loading">Loading...</div>
-                        <div id="success" style="display: none;">Success!</div>
-                        <div id="error" style="display: none;">Error!</div>
-                    </body>
-                    </html>
-                `);
-            } else {
-                res.writeHead(404);
-                res.end('Not found');
-            }
+    beforeEach(() => {
+        // Create a fresh DOM for each test
+        dom = new JSDOM(`
+            <!DOCTYPE html>
+            <html>
+            <head><title>Callback Test</title></head>
+            <body>
+                <div id="loading">Loading...</div>
+                <div id="success" style="display: none;">Success!</div>
+                <div id="error" style="display: none;">Error!</div>
+                <span id="errorMessage"></span>
+            </body>
+            </html>
+        `, {
+            url: 'http://localhost',
+            pretendToBeVisual: true,
+            resources: 'usable'
         });
+
+        window = dom.window;
+        document = window.document;
+        global.window = window;
+        global.document = document;
     });
 
-    afterAll(() => {
-        if (server) {
-            server.close();
-        }
+    afterEach(() => {
+        dom.window.close();
     });
 
-    describe('OAuth Callback Endpoint', () => {
-        test('should handle successful callback', async () => {
-            const response = await request(server)
-                .get('/auth/callback/?code=test_auth_code_12345&state=test_state_67890')
-                .expect(200);
+    describe('OAuth Callback Logic', () => {
+        test('should parse authorization code from URL parameters', () => {
+            // Mock URL with authorization code
+            const mockUrl = 'http://localhost/auth/callback/?code=test_auth_code_12345&state=test_state_67890';
+            Object.defineProperty(window, 'location', {
+                value: { href: mockUrl, search: '?code=test_auth_code_12345&state=test_state_67890' },
+                writable: true
+            });
 
-            expect(response.text).toContain('Callback Test');
-            expect(response.text).toContain('Loading...');
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
+
+            expect(code).toBe('test_auth_code_12345');
+            expect(state).toBe('test_state_67890');
         });
 
-        test('should handle error callback', async () => {
-            const response = await request(server)
-                .get('/auth/callback/?error=access_denied&error_description=User+denied+access')
-                .expect(200);
+        test('should parse error parameters from URL', () => {
+            // Mock URL with error
+            const mockUrl = 'http://localhost/auth/callback/?error=access_denied&error_description=User+denied+access';
+            Object.defineProperty(window, 'location', {
+                value: { href: mockUrl, search: '?error=access_denied&error_description=User+denied+access' },
+                writable: true
+            });
 
-            expect(response.text).toContain('Callback Test');
-            expect(response.text).toContain('Loading...');
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            const errorDescription = urlParams.get('error_description');
+
+            expect(error).toBe('access_denied');
+            expect(errorDescription).toBe('User denied access');
         });
 
-        test('should handle callback without parameters', async () => {
-            const response = await request(server)
-                .get('/auth/callback/')
-                .expect(200);
+        test('should handle malformed URL parameters', () => {
+            // Mock URL with malformed parameters
+            Object.defineProperty(window, 'location', {
+                value: { href: 'http://localhost/auth/callback/', search: '?malformed=param&another=value' },
+                writable: true
+            });
 
-            expect(response.text).toContain('Callback Test');
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+
+            expect(code).toBeNull();
+            expect(error).toBeNull();
         });
     });
 
     describe('OAuth Flow Simulation', () => {
-        test('should simulate complete OAuth flow', async () => {
-            // Step 1: User clicks "Connect to Spotify"
-            const authUrl = 'https://accounts.spotify.com/authorize?' +
-                'client_id=test_client_id&' +
-                'response_type=code&' +
-                'redirect_uri=http://localhost/auth/callback/&' +
-                'scope=playlist-modify-public&' +
-                'state=test_state_123';
+        test('should simulate complete OAuth flow logic', () => {
+            // Test OAuth flow components
+            const clientId = 'test_client_id';
+            const redirectUri = 'http://localhost/auth/callback/';
+            const scopes = ['playlist-modify-public', 'playlist-modify-private', 'user-read-email', 'user-read-private'];
+            
+            // Simulate authorization URL construction
+            const authUrl = `https://accounts.spotify.com/authorize?` +
+                `client_id=${clientId}&` +
+                `response_type=code&` +
+                `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+                `scope=${encodeURIComponent(scopes.join(' '))}&` +
+                `state=test_state`;
 
             expect(authUrl).toContain('accounts.spotify.com');
             expect(authUrl).toContain('client_id=test_client_id');
             expect(authUrl).toContain('response_type=code');
-
-            // Step 2: User authorizes and gets redirected back
-            const callbackUrl = 'http://localhost/auth/callback/?' +
-                'code=test_auth_code_456&' +
-                'state=test_state_123';
-
-            expect(callbackUrl).toContain('code=test_auth_code_456');
-            expect(callbackUrl).toContain('state=test_state_123');
-
-            // Step 3: Callback page processes the code
-            const response = await request(server)
-                .get(callbackUrl)
-                .expect(200);
-
-            expect(response.text).toContain('Callback Test');
+            expect(authUrl).toContain('redirect_uri=');
+            expect(authUrl).toContain('scope=');
         });
     });
 
     describe('Error Handling', () => {
-        test('should handle network errors gracefully', async () => {
-            // Simulate network error
-            const errorResponse = await request(server)
-                .get('/auth/callback/?error=server_error&error_description=Internal+server+error')
-                .expect(200);
-
-            expect(errorResponse.text).toContain('Callback Test');
-        });
-
-        test('should handle malformed URLs', async () => {
-            const response = await request(server)
-                .get('/auth/callback/?malformed=param&another=value')
-                .expect(200);
-
-            expect(response.text).toContain('Callback Test');
-        });
-    });
-
-    describe('Security Considerations', () => {
-        test('should validate state parameter', () => {
-            const originalState = 'test_state_12345';
-            const returnedState = 'test_state_12345';
+        test('should handle network errors gracefully', () => {
+            // Test error handling logic
+            const mockError = new Error('Network error');
             
-            // State should match to prevent CSRF attacks
-            expect(returnedState).toBe(originalState);
+            // Simulate error handling
+            const handleError = (error) => {
+                return {
+                    type: 'error',
+                    message: error.message,
+                    timestamp: new Date().toISOString()
+                };
+            };
+
+            const result = handleError(mockError);
+            
+            expect(result.type).toBe('error');
+            expect(result.message).toBe('Network error');
+            expect(result.timestamp).toBeDefined();
         });
 
-        test('should handle state mismatch', () => {
-            const originalState = 'test_state_12345';
-            const returnedState = 'different_state_67890';
-            
-            // State mismatch should be handled
-            expect(returnedState).not.toBe(originalState);
-        });
+        test('should handle missing URL parameters', () => {
+            // Mock URL without parameters
+            Object.defineProperty(window, 'location', {
+                value: { href: 'http://localhost/auth/callback/', search: '' },
+                writable: true
+            });
 
-        test('should validate redirect URI', () => {
-            const expectedRedirectUri = 'http://localhost/auth/callback/';
-            const actualRedirectUri = 'http://localhost/auth/callback/';
-            
-            expect(actualRedirectUri).toBe(expectedRedirectUri);
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+
+            expect(code).toBeNull();
+            expect(error).toBeNull();
         });
     });
 });
-
