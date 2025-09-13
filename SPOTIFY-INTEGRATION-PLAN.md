@@ -1,6 +1,6 @@
-# 🎵 Spotify Integration Plan
+# Spotify Integration Plan
 
-## 🎯 **Integration Overview**
+## **Integration Overview**
 
 We'll replace the simulated token exchange with real Spotify API integration to enable actual playlist creation.
 
@@ -71,7 +71,7 @@ SPOTIFY_CLIENT_SECRET=your_client_secret_here
 - Create actual playlists
 - Return playlist URL to user
 
-## 🔧 **Technical Implementation**
+## **Technical Implementation**
 
 ### **Authentication Flow**
 
@@ -110,7 +110,7 @@ user-read-email
 user-read-private
 ```
 
-## 🚀 **Implementation Steps**
+## **Implementation Steps**
 
 ### **Phase 1: Authentication (Priority 1)**
 
@@ -148,7 +148,7 @@ user-read-private
 - Handle API errors properly
 - Secure environment variables
 
-## 📊 **Testing Strategy**
+## **Testing Strategy**
 
 ### **Authentication Testing**
 
@@ -164,7 +164,7 @@ user-read-private
 - Test various prompt types
 - Test error scenarios
 
-## 🎯 **Success Criteria**
+## **Success Criteria**
 
 - [ ] Users can authenticate with Spotify
 - [ ] AI generates relevant song recommendations
@@ -173,7 +173,7 @@ user-read-private
 - [ ] Error handling works properly
 - [ ] Local and production environments work
 
-## 📝 **Next Steps**
+## **Next Steps**
 
 1. **Set up Spotify Developer App**
 2. **Create token exchange function**
@@ -182,4 +182,4 @@ user-read-private
 5. **Implement playlist creation**
 6. **Update UI for Spotify integration**
 
-Ready to start implementation! 🚀
+Ready to start implementation!

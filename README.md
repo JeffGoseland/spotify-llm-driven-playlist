@@ -2,7 +2,7 @@
 
 A mystical AI-powered playlist generator that combines the wisdom of ancient soothsayers with cutting-edge computer science to divine perfect playlists.
 
-## ✨ Features
+## Features
 
 - **Neural Bard Interface** - Mystical AI that speaks in a tech-savvy, poetic manner
 - **Natural Language Input** - Describe your perfect playlist in plain English
@@ -11,11 +11,11 @@ A mystical AI-powered playlist generator that combines the wisdom of ancient soo
 - **Security Features** - Rate limiting, input validation, and monitoring
 - **Netlify Deployment** - Serverless functions with automatic scaling
 
-## 🚀 Live Demo
+## Live Demo
 
 Visit: <https://spotify-llm-driven-playlist.netlify.app/>
 
-## 🎵 How It Works
+## How It Works
 
 1. **Connect to Spotify** - Authenticate with your Spotify account for playlist creation
 2. **Speak to the Neural Bard** - Enter your musical desires in the mystical interface
@@ -24,7 +24,7 @@ Visit: <https://spotify-llm-driven-playlist.netlify.app/>
 5. **Create on Spotify** - Your playlist is automatically created in your Spotify account
 6. **Enjoy the Magic** - Discover new music through the power of AI divination
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: HTML5 + Bootstrap 5 + Vanilla JavaScript
 - **Backend**: Netlify Functions (serverless)
@@ -32,7 +32,7 @@ Visit: <https://spotify-llm-driven-playlist.netlify.app/>
 - **Deployment**: Netlify with automatic builds
 - **Security**: Rate limiting, input validation, CORS protection
 
-## 🔧 Local Development
+## Local Development
 
 1. Clone the repository
 2. Install dependencies: `npm install`
@@ -59,7 +59,7 @@ The Neural Bard combines:
 - Environment variable security
 - Request logging and monitoring
 
-## 📝 API Usage
+## API Usage
 
 ```bash
 curl -X POST https://spotify-llm-driven-playlist.netlify.app/api/neural-bard \
@@ -75,7 +75,7 @@ curl -X POST https://spotify-llm-driven-playlist.netlify.app/api/neural-bard \
 - "I need music for studying"
 - "Create a romantic dinner playlist"
 
-## 🧪 Testing Guide
+## Testing Guide
 
 ### **Test Suite Overview**
 
@@ -114,9 +114,9 @@ The project uses a **mixed environment approach** for optimal performance:
 
 This setup provides:
 
-- ⚡ **Fast execution** for server-side tests
-- 🎯 **Accurate browser simulation** for DOM tests
-- 📊 **Minimal performance overhead**
+- **Fast execution** for server-side tests
+- **Accurate browser simulation** for DOM tests
+- **Minimal performance overhead**
 
 ### **Spotify OAuth Callback Testing**
 
@@ -180,12 +180,12 @@ console.log('Token:', localStorage.getItem('spotify_access_token'));
 
 Current test coverage includes:
 
-- ✅ **URL Parameter Parsing** - Authorization codes, errors, state validation
-- ✅ **Token Storage** - localStorage operations and retrieval
-- ✅ **UI State Management** - Loading, success, and error states
-- ✅ **Token Exchange Simulation** - Success and failure scenarios
-- ✅ **Redirect URL Generation** - Spotify auth URL construction
-- ✅ **Error Handling** - Various error conditions and edge cases
+- **URL Parameter Parsing** - Authorization codes, errors, state validation
+- **Token Storage** - localStorage operations and retrieval
+- **UI State Management** - Loading, success, and error states
+- **Token Exchange Simulation** - Success and failure scenarios
+- **Redirect URL Generation** - Spotify auth URL construction
+- **Error Handling** - Various error conditions and edge cases
 
 ### **Live Server Testing**
 

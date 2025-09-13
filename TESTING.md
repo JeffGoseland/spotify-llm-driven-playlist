@@ -1,6 +1,6 @@
-# 🧪 Quick Testing Reference
+# Quick Testing Reference
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Install dependencies
@@ -14,7 +14,7 @@ netlify dev
 npm test
 ```
 
-## 🎯 Testing Commands
+## Testing Commands
 
 | Command | Description |
 |---------|-------------|
@@ -38,27 +38,27 @@ npm test
 - **Success Callback**: `https://spotify-llm-driven-playlist.netlify.app/auth/callback/?code=test_code&state=test_state`
 - **Error Callback**: `https://spotify-llm-driven-playlist.netlify.app/auth/callback/?error=access_denied`
 
-## 🧪 Test Scenarios
+## Test Scenarios
 
-### ✅ Success Cases
+### Success Cases
 
 - Valid authorization code with state
 - Different state values
 - Long authorization codes
 
-### ❌ Error Cases
+### Error Cases
 
 - Access denied by user
 - Invalid request parameters
 - Missing authorization code
 
-### ⚠️ Edge Cases
+### Edge Cases
 
 - Empty callback URL
 - Malformed parameters
 - Special characters in parameters
 
-## 🔧 Browser Console Testing
+## Browser Console Testing
 
 ```javascript
 // Test URL parsing
@@ -70,13 +70,13 @@ localStorage.setItem('test', 'value');
 console.log('Test:', localStorage.getItem('test'));
 ```
 
-## 📊 Test Results
+## Test Results
 
 All tests should show:
 
-- ✅ **38/38 tests passing**
-- ⚡ **~0.58 seconds execution time**
-- 🎯 **Mixed environment optimization**
+- **38/38 tests passing**
+- **~0.58 seconds execution time**
+- **Mixed environment optimization**
 
 ## 🚨 Troubleshooting
 
