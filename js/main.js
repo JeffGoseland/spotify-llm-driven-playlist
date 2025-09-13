@@ -9,19 +9,12 @@ function checkSpotifyConnection() {
     const expiresAt = localStorage.getItem('spotify_token_expires');
     
     if (accessToken && expiresAt && Date.now() < parseInt(expiresAt)) {
-        // Hide connect button in song list area and show create playlist button
+        // Hide connect button and show create playlist button in song list area
         const connectBtn = document.getElementById('connectSpotifyBtn');
         const createPlaylistBtn = document.getElementById('createPlaylistBtn');
         
         if (connectBtn) connectBtn.style.display = 'none';
         if (createPlaylistBtn) createPlaylistBtn.style.display = 'inline-block';
-        
-        // Show status in the separate section below
-        const statusDiv = document.getElementById('spotifyStatus');
-        const createPlaylistSection = document.getElementById('createPlaylistSection');
-        
-        if (statusDiv) statusDiv.style.display = 'block';
-        if (createPlaylistSection) createPlaylistSection.style.display = 'block';
         
         return true;
     } else {
@@ -30,19 +23,12 @@ function checkSpotifyConnection() {
         localStorage.removeItem('spotify_refresh_token');
         localStorage.removeItem('spotify_token_expires');
         
-        // Show connect button in song list area and hide create playlist button
+        // Show connect button and hide create playlist button in song list area
         const connectBtn = document.getElementById('connectSpotifyBtn');
         const createPlaylistBtn = document.getElementById('createPlaylistBtn');
         
         if (connectBtn) connectBtn.style.display = 'inline-block';
         if (createPlaylistBtn) createPlaylistBtn.style.display = 'none';
-        
-        // Hide status in the separate section below
-        const statusDiv = document.getElementById('spotifyStatus');
-        const createPlaylistSection = document.getElementById('createPlaylistSection');
-        
-        if (statusDiv) statusDiv.style.display = 'none';
-        if (createPlaylistSection) createPlaylistSection.style.display = 'none';
         
         return false;
     }
@@ -240,7 +226,7 @@ function displayNeuralBardData(data) {
                     <button class="btn btn-sm btn-success" onclick="downloadSongList()">
                         <i class="fas fa-download me-1"></i>Download as CSV
                     </button>
-                    <button class="btn btn-sm btn-outline-success" onclick="connectToSpotify()" id="connectSpotifyBtn" style="display: none;">
+                    <button class="btn btn-sm btn-dark" onclick="connectToSpotify()" id="connectSpotifyBtn" style="display: none;">
                         <i class="fab fa-spotify me-1"></i>Connect to Spotify
                     </button>
                     <button class="btn btn-sm btn-dark" onclick="createSpotifyPlaylistFromResults()" id="createPlaylistBtn" style="display: none;">
@@ -257,8 +243,8 @@ function displayNeuralBardData(data) {
         `}
     `;
     
-    // Show the Spotify integration section after successful playlist generation
-    document.getElementById('spotifyIntegrationSection').style.display = 'block';
+    // Spotify integration is now in the song list area - no separate section needed
+    // document.getElementById('spotifyIntegrationSection').style.display = 'block';
     
     // Store the current songs and prompt for later use
     window.currentSongs = songs;
