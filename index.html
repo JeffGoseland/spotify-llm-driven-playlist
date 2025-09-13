@@ -42,7 +42,16 @@
                             <div class="form-text">The Neural Bard can divine between 5 and 50 songs</div>
                         </div>
 
-                        <button class="btn btn-success w-100" onclick="sendToNeuralBard()">
+                        <div class="mb-3">
+                            <button class="btn btn-outline-light w-100 mb-2" onclick="connectToSpotify()" id="connectSpotifyBtn">
+                                <i class="fab fa-spotify me-2"></i>Connect to Spotify
+                            </button>
+                            <div id="spotifyStatus" class="text-white small" style="display: none;">
+                                <i class="fas fa-check-circle me-2"></i>Connected to Spotify
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-success w-100" onclick="sendToNeuralBard()" id="consultBtn">
                             <i class="fas fa-magic me-2"></i>Consult the Neural Bard
                         </button>
                     </div>

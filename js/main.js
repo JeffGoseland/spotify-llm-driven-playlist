@@ -1,5 +1,74 @@
 // neural bard - spotify llm playlist generator main script
 
+// Check if user is connected to Spotify
+function checkSpotifyConnection() {
+    const accessToken = localStorage.getItem('spotify_access_token');
+    const expiresAt = localStorage.getItem('spotify_token_expires');
+    
+    if (accessToken && expiresAt && Date.now() < parseInt(expiresAt)) {
+        document.getElementById('connectSpotifyBtn').style.display = 'none';
+        document.getElementById('spotifyStatus').style.display = 'block';
+        return true;
+    } else {
+        // Clear expired tokens
+        localStorage.removeItem('spotify_access_token');
+        localStorage.removeItem('spotify_refresh_token');
+        localStorage.removeItem('spotify_token_expires');
+        return false;
+    }
+}
+
+// Connect to Spotify
+function connectToSpotify() {
+    const clientId = 'YOUR_SPOTIFY_CLIENT_ID'; // Will be set from environment
+    const redirectUri = window.location.origin + '/auth/callback/';
+    const scope = 'playlist-modify-public playlist-modify-private user-read-email user-read-private';
+    const state = Date.now().toString();
+    
+    const authUrl = `https://accounts.spotify.com/authorize?` +
+        `client_id=${clientId}&` +
+        `response_type=code&` +
+        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+        `scope=${encodeURIComponent(scope)}&` +
+        `state=${state}`;
+    
+    window.location.href = authUrl;
+}
+
+// Create playlist on Spotify
+async function createSpotifyPlaylist(songs, prompt) {
+    const accessToken = localStorage.getItem('spotify_access_token');
+    
+    if (!accessToken) {
+        throw new Error('Not connected to Spotify');
+    }
+    
+    const response = await fetch('/api/spotify-playlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            prompt: prompt,
+            numberOfSongs: songs.length,
+            accessToken: accessToken,
+            songs: songs
+        })
+    });
+    
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create playlist');
+    }
+    
+    return await response.json();
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', () => {
+    checkSpotifyConnection();
+});
+
 // send prompt to neural bard and display response
 async function sendToNeuralBard() {
     const prompt = document.getElementById('neuralBardPrompt').value.trim();
