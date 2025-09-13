@@ -50,3 +50,5 @@ yarn-error.log*
 
 # Netlify Functions
 netlify/functions/node_modules/
+# Local Netlify folder
+.netlify

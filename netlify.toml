@@ -7,7 +7,13 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
-# SPA routing - redirect all other routes to index.html
+# Auth callback - serve the callback page directly
+[[redirects]]
+  from = "/auth/callback/"
+  to = "/auth/callback/index.html"
+  status = 200
+
+# SPA routing - redirect all other routes to index.html (but exclude auth callback)
 [[redirects]]
   from = "/*"
   to = "/index.html"

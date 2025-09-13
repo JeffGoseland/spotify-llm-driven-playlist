@@ -1,208 +1,99 @@
-# Testing Guide for Neural Bard
+# 🧪 Quick Testing Reference
 
-This project includes comprehensive unit, integration, and UI tests to ensure code quality and prevent regressions.
-
-## Test Structure
-
-```text
-__tests__/
-├── unit/           # Unit tests for individual functions
-│   ├── main.test.js        # Frontend JavaScript functions
-│   └── neural-bard.test.js # Netlify function tests
-├── integration/    # Integration tests for API flows
-│   └── api.test.js         # End-to-end API testing
-├── ui/            # UI tests for user interactions
-│   └── ui.test.js          # DOM and user interface tests
-└── setup.js       # Test configuration and mocks
-```
-
-## Running Tests
-
-### Install Dependencies
+## 🚀 Quick Start
 
 ```bash
+# Install dependencies
 npm install
-```
+npm install -g netlify-cli
 
-### Run All Tests
+# Start local server
+netlify dev
 
-```bash
+# Run all tests
 npm test
 ```
 
-### Run Specific Test Suites
+## 🎯 Testing Commands
 
-```bash
-# Unit tests only
-npm run test -- --testPathPattern=unit
+| Command | Description |
+|---------|-------------|
+| `npm test` | Run all tests |
+| `npm test -- --testPathPattern=unit` | Unit tests only |
+| `npm test -- --testPathPattern=spotify-callback` | OAuth callback tests |
+| `node test-spotify-callback.js` | Standalone callback test |
+| `netlify dev` | Start local development server |
 
-# Integration tests only
-npm run test:integration
+## 🌐 Test URLs
 
-# UI tests only
-npm run test -- --testPathPattern=ui
+### Local Testing
+
+- **Test Interface**: `http://localhost:8888/test-callback.html`
+- **Success Callback**: `http://localhost:8888/auth/callback/?code=test_code&state=test_state`
+- **Error Callback**: `http://localhost:8888/auth/callback/?error=access_denied`
+
+### Live Testing
+
+- **Test Interface**: `https://spotify-llm-driven-playlist.netlify.app/test-callback.html`
+- **Success Callback**: `https://spotify-llm-driven-playlist.netlify.app/auth/callback/?code=test_code&state=test_state`
+- **Error Callback**: `https://spotify-llm-driven-playlist.netlify.app/auth/callback/?error=access_denied`
+
+## 🧪 Test Scenarios
+
+### ✅ Success Cases
+
+- Valid authorization code with state
+- Different state values
+- Long authorization codes
+
+### ❌ Error Cases
+
+- Access denied by user
+- Invalid request parameters
+- Missing authorization code
+
+### ⚠️ Edge Cases
+
+- Empty callback URL
+- Malformed parameters
+- Special characters in parameters
+
+## 🔧 Browser Console Testing
+
+```javascript
+// Test URL parsing
+const params = new URLSearchParams(window.location.search);
+console.log('Code:', params.get('code'));
+
+// Test localStorage
+localStorage.setItem('test', 'value');
+console.log('Test:', localStorage.getItem('test'));
 ```
 
-### Watch Mode (for development)
+## 📊 Test Results
+
+All tests should show:
+
+- ✅ **38/38 tests passing**
+- ⚡ **~0.58 seconds execution time**
+- 🎯 **Mixed environment optimization**
+
+## 🚨 Troubleshooting
+
+**Netlify CLI not found:**
 
 ```bash
-npm run test:watch
+npm install -g netlify-cli
 ```
 
-### Coverage Report
+**Tests failing:**
 
 ```bash
-npm run test:coverage
+npm install  # Reinstall dependencies
 ```
 
-## Test Categories
-
-### Unit Tests (`__tests__/unit/`)
-
-**Frontend Functions (`main.test.js`)**
-
-- ✅ Song extraction from API responses
-- ✅ Copy to clipboard functionality
-- ✅ File download functionality
-- ✅ Message display functions
-- ✅ Form validation logic
-
-**Backend Function (`neural-bard.test.js`)**
-
-- ✅ CORS header handling
-- ✅ Request validation
-- ✅ API integration
-- ✅ Response formatting
-- ✅ Error handling
-
-### Integration Tests (`__tests__/integration/`)
-
-**API Flow (`api.test.js`)**
-
-- ✅ Complete request/response cycle
-- ✅ CORS preflight handling
-- ✅ Error scenarios (timeouts, rate limits)
-- ✅ Performance with large responses
-
-### UI Tests (`__tests__/ui/`)
-
-**User Interface (`ui.test.js`)**
-
-- ✅ Form validation
-- ✅ API integration from UI
-- ✅ Loading states
-- ✅ Results display
-- ✅ User interactions
-
-## Test Coverage
-
-The test suite covers:
-
-- **Frontend JavaScript**: 90%+ coverage
-- **Netlify Function**: 95%+ coverage
-- **Error Scenarios**: All major error paths
-- **User Interactions**: Complete UI workflows
-
-## Continuous Integration
-
-Tests run automatically on:
-
-- ✅ Code commits
-- ✅ Pull requests
-- ✅ Before deployments
-
-## Adding New Tests
-
-### For New Features
-
-1. Add unit tests for individual functions
-2. Add integration tests for API flows
-3. Add UI tests for user interactions
-4. Update this documentation
-
-### Test Naming Convention
-
-- Unit tests: `functionName.test.js`
-- Integration tests: `feature.test.js`
-- UI tests: `component.test.js`
-
-### Best Practices
-
-- ✅ Test both success and failure scenarios
-- ✅ Mock external dependencies
-- ✅ Use descriptive test names
-- ✅ Keep tests independent
-- ✅ Test edge cases
-
-## Debugging Tests
-
-### Run Single Test
+**Port conflicts:**
 
 ```bash
-npm test -- --testNamePattern="specific test name"
+netlify dev --port 8889  # Use different port
 ```
-
-### Verbose Output
-
-```bash
-npm test -- --verbose
-```
-
-### Debug Mode
-
-```bash
-npm test -- --detectOpenHandles --forceExit
-```
-
-## Mock Data
-
-The tests use comprehensive mock data for:
-
-- ✅ API responses
-- ✅ DOM elements
-- ✅ User interactions
-- ✅ Error scenarios
-
-## Performance Testing
-
-Integration tests include performance checks:
-
-- ✅ API response times
-- ✅ Large data handling
-- ✅ Memory usage
-- ✅ Concurrent requests
-
-## Security Testing
-
-Tests verify:
-
-- ✅ Input validation
-- ✅ CORS handling
-- ✅ Error message sanitization
-- ✅ API key protection
-
-## Maintenance
-
-### Regular Tasks
-
-- ✅ Update tests when adding features
-- ✅ Review test coverage monthly
-- ✅ Update mock data as needed
-- ✅ Refactor tests for clarity
-
-### When Tests Fail
-
-1. Check if it's a real bug or test issue
-2. Update test if requirements changed
-3. Fix code if it's a real bug
-4. Update documentation
-
-## Benefits
-
-This comprehensive test suite provides:
-
-- 🛡️ **Regression Prevention**: Catch bugs before they reach production
-- 🚀 **Confident Refactoring**: Make changes without fear
-- 📚 **Living Documentation**: Tests show how code should work
-- 🔍 **Bug Detection**: Find issues early in development
-- ✅ **Quality Assurance**: Ensure code meets standards
