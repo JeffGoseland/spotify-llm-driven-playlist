@@ -21,3 +21,8 @@
 
 [functions]
   directory = "netlify/functions"
+
+# Secrets scanning configuration
+# SPOTIFY_CLIENT_ID is meant to be public (used in OAuth flows)
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "SPOTIFY_CLIENT_ID"
