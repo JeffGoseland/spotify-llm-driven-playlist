@@ -13,10 +13,12 @@ function checkSpotifyConnection() {
         const connectBtn = document.getElementById('connectSpotifyBtn');
         const statusDiv = document.getElementById('spotifyStatus');
         const createPlaylistSection = document.getElementById('createPlaylistSection');
+        const createPlaylistBtn = document.getElementById('createPlaylistBtn');
         
         if (connectBtn) connectBtn.style.display = 'none';
         if (statusDiv) statusDiv.style.display = 'block';
         if (createPlaylistSection) createPlaylistSection.style.display = 'block';
+        if (createPlaylistBtn) createPlaylistBtn.style.display = 'inline-block';
         
         return true;
     } else {
@@ -29,10 +31,12 @@ function checkSpotifyConnection() {
         const connectBtn = document.getElementById('connectSpotifyBtn');
         const statusDiv = document.getElementById('spotifyStatus');
         const createPlaylistSection = document.getElementById('createPlaylistSection');
+        const createPlaylistBtn = document.getElementById('createPlaylistBtn');
         
         if (connectBtn) connectBtn.style.display = 'block';
         if (statusDiv) statusDiv.style.display = 'none';
         if (createPlaylistSection) createPlaylistSection.style.display = 'none';
+        if (createPlaylistBtn) createPlaylistBtn.style.display = 'none';
         
         return false;
     }
@@ -228,7 +232,10 @@ function displayNeuralBardData(data) {
                         <i class="fas fa-copy me-1"></i>Copy Song List
                     </button>
                     <button class="btn btn-sm btn-success" onclick="downloadSongList()">
-                        <i class="fas fa-download me-1"></i>Download as TXT
+                        <i class="fas fa-download me-1"></i>Download as CSV
+                    </button>
+                    <button class="btn btn-sm btn-dark" onclick="createSpotifyPlaylistFromResults()" id="createPlaylistBtn" style="display: none;">
+                        <i class="fab fa-spotify me-1"></i>Create on Spotify
                     </button>
                 </div>
             </div>
@@ -370,16 +377,27 @@ function copySongList() {
 function downloadSongList() {
     const textarea = document.querySelector('.song-list-textarea');
     if (textarea) {
-        const blob = new Blob([textarea.value], { type: 'text/plain' });
+        // Convert song list to CSV format
+        const songs = textarea.value.split('\n').filter(line => line.trim());
+        const csvContent = 'Track Number,Artist,Song Title\n' + 
+            songs.map((song, index) => {
+                // Parse "Artist - Song Title" format
+                const parts = song.split(' - ');
+                const artist = parts[0] ? parts[0].trim() : '';
+                const title = parts[1] ? parts[1].trim() : '';
+                return `${index + 1},"${artist}","${title}"`;
+            }).join('\n');
+        
+        const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'neural-bard-playlist.txt';
+        a.download = 'neural-bard-playlist.csv';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showNeuralBardMessage('Song list downloaded!', 'success');
+        showNeuralBardMessage('Song list downloaded as CSV!', 'success');
     }
 }
 
