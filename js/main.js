@@ -1,5 +1,8 @@
 // neural bard - spotify llm playlist generator main script
 
+// API endpoint configuration
+const API_BASE_URL = window.location.port === '5500' ? 'http://localhost:3000' : '';
+
 // Check if user is connected to Spotify
 function checkSpotifyConnection() {
     const accessToken = localStorage.getItem('spotify_access_token');
@@ -21,7 +24,10 @@ function checkSpotifyConnection() {
 // Connect to Spotify
 function connectToSpotify() {
     const clientId = '62d4eb4142784c7d9e0a3a1f0b1976ee';
-    const redirectUri = window.location.origin + '/auth/callback/';
+    // Use Netlify dev server for OAuth callback when using Live Server
+    const redirectUri = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+        ? 'http://localhost:3000/auth/callback/'
+        : window.location.origin + '/auth/callback/';
     const scope = 'playlist-modify-public playlist-modify-private user-read-email user-read-private';
     const state = Date.now().toString();
     
@@ -43,7 +49,11 @@ async function createSpotifyPlaylist(songs, prompt) {
         throw new Error('Not connected to Spotify');
     }
     
-    const response = await fetch('/api/spotify-playlist', {
+    const apiUrl = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+        ? 'http://localhost:3000/.netlify/functions/spotify-playlist'
+        : '/.netlify/functions/spotify-playlist';
+    
+    const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -88,11 +98,11 @@ async function sendToNeuralBard() {
     showNeuralBardLoading();
 
     try {
-        // call neural bard api - use mock server for local testing
+        // call neural bard api - use Netlify dev server for local testing
         const isLocalDev = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
         const apiUrl = isLocalDev 
-            ? 'http://localhost:3002/api/neural-bard'  // Local mock server
-            : 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard';  // Direct call
+            ? 'http://localhost:3000/.netlify/functions/neural-bard'  // Netlify dev server
+            : 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard';  // Production
         
         console.log('Using API URL:', apiUrl);
         console.log('Hostname:', window.location.hostname);
