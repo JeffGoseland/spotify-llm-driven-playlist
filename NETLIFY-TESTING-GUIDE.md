@@ -3,15 +3,17 @@
 ## 🚀 **Current Deployment Status**
 
 ### **Netlify Project**
+
 - **Project**: spotify-llm-driven-playlist
-- **URL**: https://spotify-llm-driven-playlist.netlify.app
-- **Admin**: https://app.netlify.com/projects/spotify-llm-driven-playlist
+- **URL**: <https://spotify-llm-driven-playlist.netlify.app>
+- **Admin**: <https://app.netlify.com/projects/spotify-llm-driven-playlist>
 - **Status**: ✅ Linked and ready for deployment
 
 ### **Custom Domain**
+
 - **Domain**: goseland.org
 - **Project**: goseland (separate Netlify project)
-- **URL**: https://goseland.org
+- **URL**: <https://goseland.org>
 
 ## 🧪 **Testing Strategy**
 
@@ -30,6 +32,7 @@ netlify deploy --prod
 ### **Phase 2: Test on Netlify**
 
 #### **Main Application Testing**
+
 ```bash
 # Test main interface
 curl -s "https://spotify-llm-driven-playlist.netlify.app" | grep -i "neural bard"
@@ -41,6 +44,7 @@ curl -X POST "https://spotify-llm-driven-playlist.netlify.app/api/neural-bard" \
 ```
 
 #### **Callback Testing**
+
 ```bash
 # Test callback endpoint
 curl -s "https://spotify-llm-driven-playlist.netlify.app/auth/callback/" | grep -i "spotify\|callback"
@@ -55,6 +59,7 @@ curl -s "https://spotify-llm-driven-playlist.netlify.app/auth/callback/?error=ac
 ### **Phase 3: Test on Goseland.org**
 
 #### **Option A: Subdomain Setup**
+
 ```bash
 # Set up subdomain: spotify.goseland.org
 # In Netlify admin, add custom domain: spotify.goseland.org
@@ -62,6 +67,7 @@ curl -s "https://spotify-llm-driven-playlist.netlify.app/auth/callback/?error=ac
 ```
 
 #### **Option B: Path-based Setup**
+
 ```bash
 # Set up path: goseland.org/spotify
 # Configure redirects in goseland.org project
@@ -72,31 +78,36 @@ curl -s "https://spotify-llm-driven-playlist.netlify.app/auth/callback/?error=ac
 ### **Netlify Testing (spotify-llm-driven-playlist.netlify.app)**
 
 #### **1. Main Application**
-- [ ] **Homepage loads**: https://spotify-llm-driven-playlist.netlify.app
+
+- [ ] **Homepage loads**: <https://spotify-llm-driven-playlist.netlify.app>
 - [ ] **Neural Bard interface**: Visible and functional
 - [ ] **API endpoint**: `/api/neural-bard` responds correctly
 - [ ] **Error handling**: Graceful error responses
 
 #### **2. Callback Functionality**
-- [ ] **Callback page**: https://spotify-llm-driven-playlist.netlify.app/auth/callback/
+
+- [ ] **Callback page**: <https://spotify-llm-driven-playlist.netlify.app/auth/callback/>
 - [ ] **Success callback**: `?code=test_code&state=test_state`
 - [ ] **Error callback**: `?error=access_denied`
 - [ ] **Missing parameters**: `?state=test_state`
 - [ ] **Empty callback**: `/auth/callback/`
 
 #### **3. Test Interface**
-- [ ] **Test page**: https://spotify-llm-driven-playlist.netlify.app/test-callback.html
+
+- [ ] **Test page**: <https://spotify-llm-driven-playlist.netlify.app/test-callback.html>
 - [ ] **Interactive testing**: All buttons work
 - [ ] **URL generation**: Test URLs are correct
 
 ### **Goseland.org Testing**
 
 #### **1. Domain Configuration**
+
 - [ ] **DNS setup**: Point subdomain to Netlify
 - [ ] **SSL certificate**: HTTPS working
 - [ ] **Custom domain**: Accessible via goseland.org
 
 #### **2. Integration Testing**
+
 - [ ] **Cross-domain**: Test from goseland.org
 - [ ] **CORS**: API calls work from custom domain
 - [ ] **Redirects**: Proper redirect handling
@@ -104,6 +115,7 @@ curl -s "https://spotify-llm-driven-playlist.netlify.app/auth/callback/?error=ac
 ## 🚀 **Deployment Commands**
 
 ### **Deploy to Netlify**
+
 ```bash
 # Method 1: Git push (automatic deployment)
 git add .
@@ -118,6 +130,7 @@ netlify deploy
 ```
 
 ### **Set up Custom Domain**
+
 ```bash
 # Add custom domain to Netlify project
 netlify domains:add spotify.goseland.org
@@ -129,6 +142,7 @@ netlify domains:add spotify.goseland.org
 ## 🧪 **Manual Testing URLs**
 
 ### **Netlify URLs**
+
 ```bash
 # Main application
 https://spotify-llm-driven-playlist.netlify.app
@@ -146,6 +160,7 @@ https://spotify-llm-driven-playlist.netlify.app/api/neural-bard
 ```
 
 ### **Goseland.org URLs (after setup)**
+
 ```bash
 # Subdomain approach
 https://spotify.goseland.org
@@ -159,6 +174,7 @@ https://goseland.org/spotify/auth/callback/?code=test_code&state=test_state
 ## 🔧 **Environment Variables**
 
 ### **Required for Production**
+
 ```bash
 # Set in Netlify admin or via CLI
 netlify env:set X_AI_API_KEY "your-api-key"
@@ -167,6 +183,7 @@ netlify env:set SPOTIFY_CLIENT_SECRET "your-client-secret"
 ```
 
 ### **Check Current Variables**
+
 ```bash
 # List environment variables
 netlify env:list
@@ -178,7 +195,8 @@ netlify env:get X_AI_API_KEY
 ## 📊 **Testing Results Template**
 
 ### **Netlify Testing Results**
-```
+
+```text
 ✅ Main Application: [PASS/FAIL]
 ✅ Callback Functionality: [PASS/FAIL]
 ✅ API Endpoints: [PASS/FAIL]
@@ -187,28 +205,34 @@ netlify env:get X_AI_API_KEY
 
 Issues Found:
 - [List any issues]
-```
+```text
 
 ### **Goseland.org Testing Results**
+
 ```
+
 ✅ Domain Setup: [PASS/FAIL]
 ✅ SSL Certificate: [PASS/FAIL]
 ✅ Cross-domain Access: [PASS/FAIL]
 ✅ CORS Configuration: [PASS/FAIL]
 
 Issues Found:
+
 - [List any issues]
-```
+
+```text
 
 ## 🚨 **Troubleshooting**
 
 ### **Common Issues**
+
 1. **404 on callback**: Check netlify.toml redirects
 2. **CORS errors**: Verify API endpoint configuration
 3. **Environment variables**: Check Netlify admin settings
 4. **Custom domain**: Verify DNS configuration
 
 ### **Debug Commands**
+
 ```bash
 # Check deployment status
 netlify status

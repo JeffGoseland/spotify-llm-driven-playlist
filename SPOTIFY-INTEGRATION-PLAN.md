@@ -9,6 +9,7 @@ We'll replace the simulated token exchange with real Spotify API integration to 
 ### **1. Spotify Developer App Setup**
 
 #### **Register App**
+
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/)
 2. Click "Create an App"
 3. Fill in details:
@@ -18,7 +19,9 @@ We'll replace the simulated token exchange with real Spotify API integration to 
 4. Get **Client ID** and **Client Secret**
 
 #### **Set Redirect URIs**
+
 Add these redirect URIs in Spotify dashboard:
+
 - `https://spotify-llm-driven-playlist.netlify.app/auth/callback/`
 - `http://localhost:8888/auth/callback/` (for local testing)
 
@@ -33,6 +36,7 @@ SPOTIFY_CLIENT_SECRET=your_client_secret_here
 ### **3. Create Spotify Token Exchange Function**
 
 #### **New Netlify Function: `spotify-token-exchange.js`**
+
 ```javascript
 // Exchange authorization code for access token
 // Handle token refresh
@@ -42,6 +46,7 @@ SPOTIFY_CLIENT_SECRET=your_client_secret_here
 ### **4. Update Callback Handler**
 
 #### **Replace Simulated Exchange**
+
 - Remove `simulateTokenExchange()` function
 - Implement real token exchange with Spotify API
 - Handle errors and edge cases
@@ -50,6 +55,7 @@ SPOTIFY_CLIENT_SECRET=your_client_secret_here
 ### **5. Implement Playlist Creation**
 
 #### **New Netlify Function: `spotify-playlist.js`**
+
 ```javascript
 // Create playlist on user's Spotify account
 // Add tracks to playlist
@@ -59,6 +65,7 @@ SPOTIFY_CLIENT_SECRET=your_client_secret_here
 ### **6. Update Neural Bard Integration**
 
 #### **Connect AI to Spotify**
+
 - Parse AI-generated song recommendations
 - Search Spotify for matching tracks
 - Create actual playlists
@@ -67,6 +74,7 @@ SPOTIFY_CLIENT_SECRET=your_client_secret_here
 ## 🔧 **Technical Implementation**
 
 ### **Authentication Flow**
+
 1. **User clicks "Connect to Spotify"**
 2. **Redirect to Spotify authorization**
 3. **User authorizes app**
@@ -78,21 +86,24 @@ SPOTIFY_CLIENT_SECRET=your_client_secret_here
 ### **API Endpoints Needed**
 
 #### **Token Exchange**
-```
+
+```text
 POST /api/spotify-token-exchange
 Body: { code, redirectUri }
 Response: { accessToken, refreshToken, expiresIn, user }
 ```
 
 #### **Playlist Creation**
-```
+
+```text
 POST /api/spotify-playlist
 Body: { prompt, numberOfSongs, accessToken }
 Response: { playlistUrl, playlistId, tracks }
 ```
 
 ### **Required Scopes**
-```
+
+```text
 playlist-modify-public
 playlist-modify-private
 user-read-email
@@ -102,18 +113,21 @@ user-read-private
 ## 🚀 **Implementation Steps**
 
 ### **Phase 1: Authentication (Priority 1)**
+
 - [ ] Set up Spotify Developer App
 - [ ] Create token exchange function
 - [ ] Update callback handler
 - [ ] Test authentication flow
 
 ### **Phase 2: Playlist Creation (Priority 2)**
+
 - [ ] Create playlist creation function
 - [ ] Integrate with Neural Bard
 - [ ] Handle track searching
 - [ ] Test playlist creation
 
 ### **Phase 3: UI Updates (Priority 3)**
+
 - [ ] Add "Connect to Spotify" button
 - [ ] Update success messages
 - [ ] Show playlist links
@@ -122,11 +136,13 @@ user-read-private
 ## 🔒 **Security Considerations**
 
 ### **Token Storage**
+
 - Store access tokens in localStorage (temporary)
 - Implement token refresh logic
 - Handle expired tokens gracefully
 
 ### **API Security**
+
 - Validate all inputs
 - Rate limit requests
 - Handle API errors properly
@@ -135,12 +151,14 @@ user-read-private
 ## 📊 **Testing Strategy**
 
 ### **Authentication Testing**
+
 - Test authorization flow
 - Test token exchange
 - Test token refresh
 - Test error handling
 
 ### **Playlist Testing**
+
 - Test playlist creation
 - Test track addition
 - Test various prompt types

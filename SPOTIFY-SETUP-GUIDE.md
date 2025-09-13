@@ -9,19 +9,20 @@ Your Spotify integration code is complete and ready. Here's what you need to do 
 ### **1. Create Spotify Developer App**
 
 1. **Go to Spotify Developer Dashboard**
-   - Visit: https://developer.spotify.com/dashboard/
+   - Visit: <https://developer.spotify.com/dashboard/>
    - Log in with your Spotify account
 
 2. **Create New App**
    - Click "Create an App"
    - **App Name**: Neural Bard Playlist Generator
    - **App Description**: AI-powered playlist generator using Neural Bard
-   - **Website**: https://spotify-llm-driven-playlist.netlify.app
+   - **Website**: <https://spotify-llm-driven-playlist.netlify.app>
 
 3. **Set Redirect URIs**
    - Click "Edit Settings"
    - Add these redirect URIs:
-     ```
+
+     ```text
      https://spotify-llm-driven-playlist.netlify.app/auth/callback/
      http://localhost:8888/auth/callback/
      ```
@@ -33,11 +34,12 @@ Your Spotify integration code is complete and ready. Here's what you need to do 
 ### **2. Set Environment Variables in Netlify**
 
 1. **Go to Netlify Admin**
-   - Visit: https://app.netlify.com/projects/spotify-llm-driven-playlist
+   - Visit: <https://app.netlify.com/projects/spotify-llm-driven-playlist>
    - Click "Site settings" → "Environment variables"
 
 2. **Add These Variables**
-   ```
+
+   ```text
    SPOTIFY_CLIENT_ID=your_client_id_here
    SPOTIFY_CLIENT_SECRET=your_client_secret_here
    ```
@@ -67,6 +69,7 @@ git push origin main
 ## 🎯 **What's Been Implemented**
 
 ### **✅ Complete Spotify Integration**
+
 - **OAuth Authentication**: Real Spotify authorization flow
 - **Token Exchange**: Secure token handling
 - **Playlist Creation**: Creates actual playlists on user's Spotify
@@ -74,18 +77,21 @@ git push origin main
 - **Error Handling**: Comprehensive error management
 
 ### **✅ New Features**
+
 - **Connect to Spotify Button**: Initiates OAuth flow
 - **Connection Status**: Shows when user is connected
 - **Playlist Creation**: Creates real playlists from AI recommendations
 - **Spotify Links**: Direct links to created playlists
 
 ### **✅ API Endpoints**
+
 - **`/api/spotify-token-exchange`**: Handles OAuth token exchange
 - **`/api/spotify-playlist`**: Creates playlists on Spotify
 
 ## 🧪 **Testing Checklist**
 
 ### **Authentication Flow**
+
 - [ ] Click "Connect to Spotify" button
 - [ ] Redirect to Spotify authorization page
 - [ ] Authorize the app
@@ -93,6 +99,7 @@ git push origin main
 - [ ] See "Connected to Spotify" status
 
 ### **Playlist Creation**
+
 - [ ] Enter a playlist prompt
 - [ ] Click "Consult the Neural Bard"
 - [ ] AI generates song recommendations
@@ -122,6 +129,7 @@ git push origin main
 ## 🎉 **Success Criteria**
 
 When everything is working:
+
 - ✅ Users can connect to Spotify
 - ✅ AI generates song recommendations
 - ✅ Playlists are created on user's Spotify account
@@ -130,9 +138,10 @@ When everything is working:
 
 ## 🚀 **Ready to Launch!**
 
-Your Neural Bard is now ready to create real Spotify playlists! 
+Your Neural Bard is now ready to create real Spotify playlists!
 
 **Next Steps:**
+
 1. Set up Spotify Developer App
 2. Add environment variables
 3. Deploy and test
