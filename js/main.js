@@ -219,17 +219,17 @@ function displayNeuralBardData(data) {
             <h6><i class="fas fa-music me-2"></i>Divined Song List (${songs.length} songs)</h6>
             <div class="song-list-container">
                 <textarea class="form-control song-list-textarea" rows="${Math.min(songs.length + 1, 20)}" readonly style="overflow-y: auto; max-height: 400px;">${songs.join('\n')}</textarea>
-                <div class="mt-2">
-                    <button class="btn btn-sm btn-outline-success" onclick="copySongList()">
+                <div class="mt-2 d-flex justify-content-center gap-2">
+                    <button class="btn btn-sm btn-outline-success flex-fill" onclick="copySongList()">
                         <i class="fas fa-copy me-1"></i>Copy Song List
                     </button>
-                    <button class="btn btn-sm btn-success" onclick="downloadSongList()">
+                    <button class="btn btn-sm btn-dark flex-fill" onclick="downloadSongList()">
                         <i class="fas fa-download me-1"></i>Download as CSV
                     </button>
-                    <button class="btn btn-sm btn-dark" onclick="connectToSpotify()" id="connectSpotifyBtn" style="display: none;">
+                    <button class="btn btn-sm btn-dark flex-fill" onclick="connectToSpotify()" id="connectSpotifyBtn" style="display: none;">
                         <i class="fab fa-spotify me-1"></i>Connect to Spotify
                     </button>
-                    <button class="btn btn-sm btn-dark" onclick="createSpotifyPlaylistFromResults()" id="createPlaylistBtn" style="display: none;">
+                    <button class="btn btn-sm btn-dark flex-fill" onclick="createSpotifyPlaylistFromResults()" id="createPlaylistBtn" style="display: none;">
                         <i class="fab fa-spotify me-1"></i>Create on Spotify
                     </button>
                 </div>
