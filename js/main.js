@@ -20,7 +20,7 @@ function checkSpotifyConnection() {
 
 // Connect to Spotify
 function connectToSpotify() {
-    const clientId = 'YOUR_SPOTIFY_CLIENT_ID'; // Will be set from environment
+    const clientId = '62d4eb4142784c7d9e0a3a1f0b1976ee';
     const redirectUri = window.location.origin + '/auth/callback/';
     const scope = 'playlist-modify-public playlist-modify-private user-read-email user-read-private';
     const state = Date.now().toString();
