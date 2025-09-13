@@ -58,7 +58,8 @@
         "displayName": "unit-node",
         "testMatch": [
           "<rootDir>/__tests__/unit/main.test.js",
-          "<rootDir>/__tests__/unit/neural-bard.test.js"
+          "<rootDir>/__tests__/unit/neural-bard.test.js",
+          "<rootDir>/__tests__/unit/spotify-functions.test.js"
         ],
         "testEnvironment": "node"
       },
