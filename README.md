@@ -69,6 +69,7 @@ The Neural Bard combines:
 ## API Usage
 
 ### **Neural Bard API**
+
 ```bash
 curl -X POST https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard \
   -H "Content-Type: application/json" \
@@ -76,6 +77,7 @@ curl -X POST https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/
 ```
 
 ### **Spotify Playlist Creation API**
+
 ```bash
 curl -X POST https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/spotify-playlist \
   -H "Content-Type: application/json" \
@@ -90,6 +92,7 @@ curl -X POST https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/
 ```
 
 ### **Parameters**
+
 - `prompt` - Description of the desired playlist
 - `numberOfSongs` - Number of songs to generate (5-50)
 - `accessToken` - Spotify OAuth access token
@@ -108,6 +111,7 @@ curl -X POST https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/
 ## 🆕 Recent Improvements
 
 ### **Enhanced User Experience**
+
 - **Toast Notifications** - Real-time feedback with dark-themed, centered notifications
 - **Custom Playlist Titles** - Name your playlists or use auto-generated titles
 - **Duplicate Prevention** - Automatically detects and handles existing playlists
@@ -116,6 +120,7 @@ curl -X POST https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/
 - **Better Authentication Flow** - Enhanced OAuth callback with countdown and auto-redirect
 
 ### **Technical Enhancements**
+
 - **Existing Playlist Detection** - Checks user's playlists before creating new ones
 - **Track Replacement Logic** - Option to clear existing tracks before adding new ones
 - **Enhanced Error Handling** - Better error messages and user feedback
@@ -123,6 +128,7 @@ curl -X POST https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/
 - **Real-time Status Updates** - Live progress indicators and success confirmations
 
 ### **User Interface Improvements**
+
 - **Dark Theme Integration** - Toast notifications match app's aesthetic
 - **Better Positioning** - Notifications appear at top-center for better visibility
 - **Enhanced Feedback** - Clear success/error messages with appropriate icons

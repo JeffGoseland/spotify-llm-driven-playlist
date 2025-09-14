@@ -1,0 +1,43 @@
+# Apache configuration for Neural Bard - Spotify LLM Playlist Generator
+
+# Enable URL rewriting
+RewriteEngine On
+
+# Handle CORS preflight requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# API routes - redirect to backend functions
+RewriteRule ^api/neural-bard/?$ /netlify/functions/neural-bard.js [L]
+RewriteRule ^api/spotify-playlist/?$ /netlify/functions/spotify-playlist.js [L]
+RewriteRule ^api/spotify-token-exchange/?$ /netlify/functions/spotify-token-exchange.js [L]
+
+# Auth callback - serve the callback page directly
+RewriteRule ^auth/callback/?$ /auth/callback/index.html [L]
+
+# SPA routing - redirect all other routes to index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.html [L]
+
+# Security headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# CORS headers for API endpoints
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+# Cache control
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg)$">
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+</FilesMatch>
+
+<FilesMatch "\.(html)$">
+    ExpiresActive On
+    ExpiresDefault "access plus 1 hour"
+</FilesMatch>

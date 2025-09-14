@@ -1,0 +1,12 @@
+# Redirect rules for non-Netlify hosting providers
+
+# API routes
+/api/neural-bard /netlify/functions/neural-bard.js 200
+/api/spotify-playlist /netlify/functions/spotify-playlist.js 200
+/api/spotify-token-exchange /netlify/functions/spotify-token-exchange.js 200
+
+# Auth callback
+/auth/callback/ /auth/callback/index.html 200
+
+# SPA routing - redirect all other routes to index.html
+/* /index.html 200

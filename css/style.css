@@ -3,6 +3,10 @@
 /* Toast Notifications Styling */
 .toast-container {
     z-index: 9999;
+    top: 20vh !important; /* 1/5 of the way from top (20% of viewport height) */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    position: fixed !important;
 }
 
 .toast {
@@ -26,6 +30,34 @@
 
 .toast .btn-close {
     filter: none;
+}
+
+/* Song List Button Styling */
+.song-list-container .d-flex {
+    justify-content: center !important;
+}
+
+.song-list-container .btn {
+    color: #1db954 !important;
+    border-color: #1db954 !important;
+    background-color: transparent !important;
+    margin: 0 5px !important;
+}
+
+.song-list-container .btn:hover {
+    background-color: #1db954 !important;
+    color: #000000 !important;
+    border-color: #1db954 !important;
+}
+
+.song-list-container .btn-outline-success {
+    color: #1db954 !important;
+    border-color: #1db954 !important;
+}
+
+.song-list-container .btn-outline-success:hover {
+    background-color: #1db954 !important;
+    color: #000000 !important;
 }
 
 /* Simple black background approach */

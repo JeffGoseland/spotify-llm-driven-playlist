@@ -37,7 +37,7 @@ function checkSpotifyConnection() {
 // Connect to Spotify
 function connectToSpotify() {
     const clientId = '62d4eb4142784c7d9e0a3a1f0b1976ee';
-    // Use Netlify dev server for OAuth callback when using Live Server
+    // Dynamic redirect URI based on current domain
     const redirectUri = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
         ? 'https://spotify-llm-driven-playlist.netlify.app/auth/callback/'  // Use HTTPS Netlify URL for localhost
         : window.location.origin + window.location.pathname.replace(/\/$/, '') + '/auth/callback/';
@@ -145,7 +145,9 @@ async function createSpotifyPlaylist(songs, prompt, customTitle = null, replaceE
     
     const apiUrl = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
         ? 'http://localhost:3000/.netlify/functions/spotify-playlist'
-        : '/.netlify/functions/spotify-playlist';
+        : window.location.hostname === 'spotify-llm-driven-playlist.netlify.app'
+        ? '/.netlify/functions/spotify-playlist'
+        : '/api/spotify-playlist';
     
     const response = await fetch(apiUrl, {
         method: 'POST',
@@ -200,11 +202,18 @@ async function sendToNeuralBard() {
     showNeuralBardLoading();
 
     try {
-        // call neural bard api - use Netlify dev server for local testing
+        // call neural bard api - dynamic URL based on hosting provider
         const isLocalDev = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-        const apiUrl = isLocalDev 
-            ? 'http://localhost:3000/.netlify/functions/neural-bard'  // Netlify dev server
-            : 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard';  // Production
+        const isNetlify = window.location.hostname === 'spotify-llm-driven-playlist.netlify.app';
+        
+        let apiUrl;
+        if (isLocalDev) {
+            apiUrl = 'http://localhost:3000/.netlify/functions/neural-bard';
+        } else if (isNetlify) {
+            apiUrl = '/.netlify/functions/neural-bard';
+        } else {
+            apiUrl = '/api/neural-bard';
+        }
         
         console.log('Using API URL:', apiUrl);
         console.log('Hostname:', window.location.hostname);
