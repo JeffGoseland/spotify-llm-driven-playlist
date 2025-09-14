@@ -83,7 +83,7 @@
         class SpotifyCallback {
             constructor() {
                 this.clientId = '62d4eb4142784c7d9e0a3a1f0b1976ee';
-                this.redirectUri = window.location.origin + '/auth/callback/';
+                this.redirectUri = window.location.origin + window.location.pathname.replace(/\/$/, '');
                 this.init();
             }
 
@@ -172,7 +172,9 @@
 
         // Utility functions
         function redirectToMain() {
-            window.location.href = '/';
+            // Redirect to the main page in the same directory structure
+            const mainPageUrl = window.location.origin + window.location.pathname.replace('/auth/callback/', '/');
+            window.location.href = mainPageUrl;
         }
 
         function retryAuth() {
