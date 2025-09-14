@@ -122,6 +122,13 @@
                     const apiUrl = window.location.hostname === 'spotify-llm-driven-playlist.netlify.app'
                         ? '/.netlify/functions/spotify-token-exchange'
                         : 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/spotify-token-exchange';
+                    
+                    console.log('Token exchange API URL:', apiUrl);
+                    console.log('Request body:', {
+                        code: code,
+                        redirectUri: this.redirectUri
+                    });
+                    
                     const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: {
@@ -134,8 +141,16 @@
                     });
                     
                     if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.error || 'Token exchange failed');
+                        console.error('Token exchange failed with status:', response.status);
+                        let errorMessage = 'Token exchange failed';
+                        try {
+                            const errorData = await response.json();
+                            console.error('Error response:', errorData);
+                            errorMessage = errorData.error || errorMessage;
+                        } catch (e) {
+                            console.error('Could not parse error response:', e);
+                        }
+                        throw new Error(errorMessage);
                     }
                     
                     const tokenData = await response.json();
