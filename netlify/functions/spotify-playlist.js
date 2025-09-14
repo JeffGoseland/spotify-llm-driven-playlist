@@ -28,7 +28,7 @@ exports.handler = async (event, context) => {
     }
 
     try {
-        const { prompt, numberOfSongs, accessToken, songs } = JSON.parse(event.body);
+        const { prompt, numberOfSongs, accessToken, songs, customTitle } = JSON.parse(event.body);
 
         if (!accessToken) {
             return {
@@ -63,9 +63,13 @@ exports.handler = async (event, context) => {
 
         const user = await profileResponse.json();
 
-        // Create playlist
+        // Create playlist with custom title or auto-generated name
+        const playlistName = customTitle && customTitle.trim() 
+            ? customTitle.trim()
+            : `Neural Bard: ${prompt.substring(0, 50)}${prompt.length > 50 ? '...' : ''}`;
+            
         const playlistData = {
-            name: `Neural Bard: ${prompt.substring(0, 50)}${prompt.length > 50 ? '...' : ''}`,
+            name: playlistName,
             description: `Created by Neural Bard AI - "${prompt}"`,
             public: true
         };

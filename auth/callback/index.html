@@ -57,6 +57,8 @@
         <div id="success" class="alert alert-success" style="display: none;">
             <i class="fas fa-check-circle me-2"></i>
             <strong>Success!</strong> Connected to Spotify successfully.
+            <p class="mb-2 mt-2">You can now create playlists with Neural Bard! Redirecting to get started...</p>
+            <p class="small text-muted mb-3">Redirecting automatically in <span id="countdown">5</span> seconds...</p>
             <div class="mt-3">
                 <button class="btn btn-spotify" onclick="redirectToMain()">
                     <i class="fas fa-music me-2"></i>Continue to Neural Bard
@@ -158,6 +160,27 @@
                 // Show success message
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('success').style.display = 'block';
+                
+                // Start countdown timer
+                let countdown = 5;
+                const countdownElement = document.getElementById('countdown');
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    if (countdownElement) {
+                        countdownElement.textContent = countdown;
+                    }
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+                
+                // Show success notification, wait 2 seconds, then auto-redirect after 3 more seconds
+                setTimeout(() => {
+                    clearInterval(countdownInterval);
+                    // Store a flag to show success toast on main page
+                    localStorage.setItem('spotify_connection_success', 'true');
+                    redirectToMain();
+                }, 5000); // Total 5 seconds: 2s to show success + 3s countdown
             }
 
             handleError(errorMessage) {

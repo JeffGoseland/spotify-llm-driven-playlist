@@ -62,22 +62,48 @@ async function createSpotifyPlaylistFromResults() {
         return;
     }
     
+    let progressInterval;
     try {
         showPlaylistCreationStatus('Creating playlist on Spotify...', 'info');
         
-        const result = await createSpotifyPlaylist(window.currentSongs, window.currentPrompt);
+        // Get custom playlist title if provided
+        const customTitle = document.getElementById('playlistTitle')?.value?.trim() || null;
+        
+        // Show progress updates
+        const progressSteps = [
+            'Creating playlist...',
+            'Searching for tracks...',
+            'Adding tracks to playlist...',
+            'Finalizing playlist...'
+        ];
+        
+        let currentStep = 0;
+        progressInterval = setInterval(() => {
+            if (currentStep < progressSteps.length) {
+                showPlaylistCreationStatus(progressSteps[currentStep], 'info');
+                currentStep++;
+            }
+        }, 1000);
+        
+        const result = await createSpotifyPlaylist(window.currentSongs, window.currentPrompt, customTitle);
+        
+        clearInterval(progressInterval);
         
         if (result.success) {
             showPlaylistCreationStatus(
-                `✅ Playlist created successfully! <a href="${result.playlist.url}" target="_blank" class="alert-link">Open in Spotify</a>`,
+                `✅ Playlist "${result.playlist.name}" created successfully! <a href="${result.playlist.url}" target="_blank" class="alert-link">Open in Spotify</a>`,
                 'success'
             );
+            showToast(`Playlist "${result.playlist.name}" created with ${result.playlist.tracksAdded} songs!`, 'success');
         } else {
             showPlaylistCreationStatus(`❌ Failed to create playlist: ${result.error}`, 'error');
+            showToast(`Failed to create playlist: ${result.error}`, 'error');
         }
     } catch (error) {
         console.error('Playlist creation error:', error);
+        clearInterval(progressInterval);
         showPlaylistCreationStatus(`❌ Error creating playlist: ${error.message}`, 'error');
+        showToast(`Error creating playlist: ${error.message}`, 'error');
     }
 }
 
@@ -89,12 +115,21 @@ function showPlaylistCreationStatus(message, type = 'info') {
     const alertClass = type === 'error' ? 'alert-danger' : 
                      type === 'success' ? 'alert-success' : 'alert-info';
     
-    statusDiv.innerHTML = `<div class="alert ${alertClass} mb-0">${message}</div>`;
+    const iconClass = type === 'error' ? 'fas fa-exclamation-circle' : 
+                     type === 'success' ? 'fas fa-check-circle' : 
+                     'fas fa-spinner fa-spin';
+    
+    statusDiv.innerHTML = `
+        <div class="alert ${alertClass} mb-0 d-flex align-items-center">
+            <i class="${iconClass} me-2"></i>
+            <div>${message}</div>
+        </div>
+    `;
     statusDiv.style.display = 'block';
 }
 
 // Create playlist on Spotify
-async function createSpotifyPlaylist(songs, prompt) {
+async function createSpotifyPlaylist(songs, prompt, customTitle = null) {
     const accessToken = localStorage.getItem('spotify_access_token');
     
     if (!accessToken) {
@@ -114,7 +149,8 @@ async function createSpotifyPlaylist(songs, prompt) {
             prompt: prompt,
             numberOfSongs: songs.length,
             accessToken: accessToken,
-            songs: songs
+            songs: songs,
+            customTitle: customTitle
         })
     });
     
@@ -129,6 +165,12 @@ async function createSpotifyPlaylist(songs, prompt) {
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
     checkSpotifyConnection();
+    
+    // Check if user just connected to Spotify and show success toast
+    if (localStorage.getItem('spotify_connection_success') === 'true') {
+        localStorage.removeItem('spotify_connection_success');
+        showToast('Successfully connected to Spotify! You can now create playlists.', 'success');
+    }
 });
 
 // send prompt to neural bard and display response
@@ -177,6 +219,14 @@ async function sendToNeuralBard() {
 
         const neuralBardResponse = await response.json();
         displayNeuralBardData(neuralBardResponse);
+        
+        // Show success toast
+        const songs = extractSongsFromResponse(neuralBardResponse.response);
+        if (songs.length > 0) {
+            showToast(`Neural Bard generated ${songs.length} songs for your playlist!`, 'success');
+        } else {
+            showToast('Neural Bard completed your request!', 'info');
+        }
         
     } catch (error) {
         console.error('Neural Bard error:', error);
@@ -369,6 +419,7 @@ function copySongList() {
         textarea.select();
         document.execCommand('copy');
         showNeuralBardMessage('Song list copied to clipboard!', 'success');
+        showToast('Song list copied to clipboard!', 'success');
     }
 }
 
@@ -397,6 +448,7 @@ function downloadSongList() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         showNeuralBardMessage('Song list downloaded as CSV!', 'success');
+        showToast('Song list downloaded as CSV!', 'success');
     }
 }
 
@@ -426,6 +478,46 @@ function showNeuralBardMessage(message, type = 'info') {
     
     const mainContent = document.querySelector('.container.mt-5');
     mainContent.insertAdjacentHTML('afterbegin', messageHtml);
+}
+
+// Show toast notification
+function showToast(message, type = 'info', duration = 5000) {
+    const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) return;
+    
+    const toastId = 'toast-' + Date.now();
+    const iconClass = type === 'success' ? 'fas fa-check-circle' : 
+                     type === 'error' ? 'fas fa-exclamation-circle' :
+                     type === 'warning' ? 'fas fa-exclamation-triangle' :
+                     'fas fa-info-circle';
+    
+    const toastHtml = `
+        <div class="toast" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="${iconClass} me-2 text-${type === 'error' ? 'danger' : type}"></i>
+                <strong class="me-auto">Neural Bard</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+    
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, {
+        autohide: duration > 0,
+        delay: duration
+    });
+    
+    toast.show();
+    
+    // Remove toast element after it's hidden
+    toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+    });
 }
 
 // toggle functions for collapsible sections
