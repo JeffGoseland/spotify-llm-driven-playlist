@@ -590,6 +590,35 @@ pre {
     color: #000000 !important;
 }
 
+/* Spotify Playlist Loading Modal - Dark Theme */
+#spotifyPlaylistLoadingModal .modal-content {
+    background-color: #1a1a1a !important;
+    border: 2px solid #1db954 !important;
+    border-radius: 15px !important;
+    box-shadow: 0 0 30px rgba(29, 185, 84, 0.4), 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+}
+
+#spotifyPlaylistLoadingModal .modal-body {
+    color: #ffffff !important;
+    background-color: transparent !important;
+}
+
+#spotifyPlaylistLoadingModal h5 {
+    color: #1db954 !important;
+    font-weight: 600 !important;
+    text-shadow: 0 0 10px rgba(29, 185, 84, 0.3) !important;
+}
+
+#spotifyPlaylistLoadingModal .text-muted {
+    color: #cccccc !important;
+}
+
+#spotifyPlaylistLoadingModal .spinner-border {
+    color: #1db954 !important;
+    width: 3rem !important;
+    height: 3rem !important;
+}
+
 /* responsive design */
 @media (max-width: 768px) {
     .hero-section {
