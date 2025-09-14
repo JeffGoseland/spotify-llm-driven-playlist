@@ -40,7 +40,7 @@ function connectToSpotify() {
     // Use appropriate callback URI based on environment
     let redirectUri;
     if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
-        redirectUri = 'https://localhost:3000/auth/callback/';
+        redirectUri = 'https://localhost:3000/auth/callback/spotify-callback.html';
     } else if (window.location.hostname === 'goseland.org') {
         redirectUri = 'https://goseland.org/spotify-llm-driven-playlist/auth/callback/';
     } else {

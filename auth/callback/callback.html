@@ -87,7 +87,7 @@
                 this.clientId = '62d4eb4142784c7d9e0a3a1f0b1976ee';
                 // Use appropriate callback URI based on environment
                 if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
-                    this.redirectUri = 'https://localhost:3000/auth/callback/';
+                    this.redirectUri = 'http://localhost:3000/auth/callback/';
                 } else if (window.location.hostname === 'goseland.org') {
                     this.redirectUri = 'https://goseland.org/spotify-llm-driven-playlist/auth/callback/';
                 } else {
