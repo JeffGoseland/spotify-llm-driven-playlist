@@ -1,5 +1,33 @@
 /* neural bard - spotify llm playlist generator styles */
 
+/* Toast Notifications Styling */
+.toast-container {
+    z-index: 9999;
+}
+
+.toast {
+    background-color: #ffffff !important;
+    border: 1px solid #ddd !important;
+    color: black !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: blur(10px);
+}
+
+.toast-header {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    color: black !important;
+}
+
+.toast-body {
+    background-color: #ffffff !important;
+    color: black !important;
+}
+
+.toast .btn-close {
+    filter: none;
+}
+
 /* Simple black background approach */
 html {
     background-color: #000000;

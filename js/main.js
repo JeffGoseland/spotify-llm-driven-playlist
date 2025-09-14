@@ -69,9 +69,13 @@ async function createSpotifyPlaylistFromResults() {
         // Get custom playlist title if provided
         const customTitle = document.getElementById('playlistTitle')?.value?.trim() || null;
         
+        // Get replace existing tracks preference
+        const replaceExisting = document.getElementById('replaceExistingTracks')?.checked || false;
+        
         // Show progress updates
         const progressSteps = [
-            'Creating playlist...',
+            'Checking for existing playlists...',
+            'Preparing playlist...',
             'Searching for tracks...',
             'Adding tracks to playlist...',
             'Finalizing playlist...'
@@ -85,16 +89,19 @@ async function createSpotifyPlaylistFromResults() {
             }
         }, 1000);
         
-        const result = await createSpotifyPlaylist(window.currentSongs, window.currentPrompt, customTitle);
+        const result = await createSpotifyPlaylist(window.currentSongs, window.currentPrompt, customTitle, replaceExisting);
         
         clearInterval(progressInterval);
         
         if (result.success) {
+            const actionText = result.playlist.wasExisting ? 'updated' : 'created';
+            const actionIcon = result.playlist.wasExisting ? '🔄' : '✅';
+            
             showPlaylistCreationStatus(
-                `✅ Playlist "${result.playlist.name}" created successfully! <a href="${result.playlist.url}" target="_blank" class="alert-link">Open in Spotify</a>`,
+                `${actionIcon} Playlist <strong>"${result.playlist.name}"</strong> ${actionText} successfully! <a href="${result.playlist.url}" target="_blank" class="alert-link">Open in Spotify</a>`,
                 'success'
             );
-            showToast(`Playlist "${result.playlist.name}" created with ${result.playlist.tracksAdded} songs!`, 'success');
+            showToast(`Playlist <strong>"${result.playlist.name}"</strong> ${actionText} with ${result.playlist.tracksAdded} songs!`, 'success');
         } else {
             showPlaylistCreationStatus(`❌ Failed to create playlist: ${result.error}`, 'error');
             showToast(`Failed to create playlist: ${result.error}`, 'error');
@@ -129,7 +136,7 @@ function showPlaylistCreationStatus(message, type = 'info') {
 }
 
 // Create playlist on Spotify
-async function createSpotifyPlaylist(songs, prompt, customTitle = null) {
+async function createSpotifyPlaylist(songs, prompt, customTitle = null, replaceExisting = false) {
     const accessToken = localStorage.getItem('spotify_access_token');
     
     if (!accessToken) {
@@ -150,7 +157,8 @@ async function createSpotifyPlaylist(songs, prompt, customTitle = null) {
             numberOfSongs: songs.length,
             accessToken: accessToken,
             songs: songs,
-            customTitle: customTitle
+            customTitle: customTitle,
+            replaceExisting: replaceExisting
         })
     });
     
@@ -491,10 +499,16 @@ function showToast(message, type = 'info', duration = 5000) {
                      type === 'warning' ? 'fas fa-exclamation-triangle' :
                      'fas fa-info-circle';
     
+    // Color mapping for better visibility
+    const colorClass = type === 'success' ? 'text-success' : 
+                      type === 'error' ? 'text-danger' :
+                      type === 'warning' ? 'text-warning' :
+                      'text-info';
+    
     const toastHtml = `
-        <div class="toast" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" style="min-width: 350px;">
             <div class="toast-header">
-                <i class="${iconClass} me-2 text-${type === 'error' ? 'danger' : type}"></i>
+                <i class="${iconClass} me-2 ${colorClass}"></i>
                 <strong class="me-auto">Neural Bard</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>

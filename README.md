@@ -7,6 +7,11 @@ A mystical AI-powered playlist generator that combines the wisdom of ancient soo
 - **Neural Bard Interface** - Mystical AI that speaks in a tech-savvy, poetic manner
 - **Natural Language Input** - Describe your perfect playlist in plain English
 - **Spotify Integration** - Real OAuth authentication and playlist creation
+- **Custom Playlist Titles** - Name your playlists or let Neural Bard create unique names
+- **Duplicate Prevention** - Automatically detects existing playlists with the same name
+- **Smart Playlist Management** - Option to replace tracks in existing playlists
+- **Real-time Notifications** - Toast notifications for all actions and status updates
+- **Enhanced UX** - Improved progress indicators and user feedback
 - **x.ai Grok Integration** - Powered by Grok-3-fast for intelligent responses
 - **Security Features** - Rate limiting, input validation, and monitoring
 - **Netlify Deployment** - Serverless functions with automatic scaling
@@ -17,12 +22,14 @@ Visit: <https://spotify-llm-driven-playlist.netlify.app/>
 
 ## How It Works
 
-1. **Connect to Spotify** - Authenticate with your Spotify account for playlist creation
+1. **Connect to Spotify** - Authenticate with your Spotify account (with improved success feedback)
 2. **Speak to the Neural Bard** - Enter your musical desires in the mystical interface
-3. **Consult the Oracle** - The Neural Bard processes your request with AI magic
-4. **Receive Divination** - Get detailed playlist recommendations with track explanations
-5. **Create on Spotify** - Your playlist is automatically created in your Spotify account
-6. **Enjoy the Magic** - Discover new music through the power of AI divination
+3. **Customize Your Playlist** - Optionally set a custom title and choose playlist behavior
+4. **Consult the Oracle** - The Neural Bard processes your request with AI magic
+5. **Receive Divination** - Get detailed playlist recommendations with track explanations
+6. **Smart Playlist Creation** - Automatically checks for duplicates and creates/updates playlists
+7. **Real-time Feedback** - Get instant notifications about playlist creation progress
+8. **Enjoy the Magic** - Discover new music through the power of AI divination
 
 ## Tech Stack
 
@@ -61,11 +68,34 @@ The Neural Bard combines:
 
 ## API Usage
 
+### **Neural Bard API**
 ```bash
-curl -X POST https://spotify-llm-driven-playlist.netlify.app/api/neural-bard \
+curl -X POST https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard \
   -H "Content-Type: application/json" \
-  -d '{"prompt": "Create a playlist for coding late at night"}'
+  -d '{"prompt": "Create a playlist for coding late at night", "numberOfSongs": 25}'
 ```
+
+### **Spotify Playlist Creation API**
+```bash
+curl -X POST https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/spotify-playlist \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "coding playlist",
+    "numberOfSongs": 25,
+    "accessToken": "your_spotify_token",
+    "songs": ["Artist - Song Title"],
+    "customTitle": "My Custom Playlist",
+    "replaceExisting": false
+  }'
+```
+
+### **Parameters**
+- `prompt` - Description of the desired playlist
+- `numberOfSongs` - Number of songs to generate (5-50)
+- `accessToken` - Spotify OAuth access token
+- `songs` - Array of song titles to add to playlist
+- `customTitle` - Optional custom playlist name
+- `replaceExisting` - Whether to replace tracks in existing playlists
 
 ## 🌟 Example Prompts
 
@@ -74,6 +104,30 @@ curl -X POST https://spotify-llm-driven-playlist.netlify.app/api/neural-bard \
 - "Generate a playlist for a road trip"
 - "I need music for studying"
 - "Create a romantic dinner playlist"
+
+## 🆕 Recent Improvements
+
+### **Enhanced User Experience**
+- **Toast Notifications** - Real-time feedback with dark-themed, centered notifications
+- **Custom Playlist Titles** - Name your playlists or use auto-generated titles
+- **Duplicate Prevention** - Automatically detects and handles existing playlists
+- **Smart Playlist Management** - Option to replace tracks in existing playlists
+- **Improved Progress Tracking** - Visual progress indicators during playlist creation
+- **Better Authentication Flow** - Enhanced OAuth callback with countdown and auto-redirect
+
+### **Technical Enhancements**
+- **Existing Playlist Detection** - Checks user's playlists before creating new ones
+- **Track Replacement Logic** - Option to clear existing tracks before adding new ones
+- **Enhanced Error Handling** - Better error messages and user feedback
+- **Improved UI/UX** - Better positioning, styling, and user interactions
+- **Real-time Status Updates** - Live progress indicators and success confirmations
+
+### **User Interface Improvements**
+- **Dark Theme Integration** - Toast notifications match app's aesthetic
+- **Better Positioning** - Notifications appear at top-center for better visibility
+- **Enhanced Feedback** - Clear success/error messages with appropriate icons
+- **Responsive Design** - Works well on different screen sizes
+- **Accessibility** - Proper ARIA labels and screen reader support
 
 ## Testing Guide
 
