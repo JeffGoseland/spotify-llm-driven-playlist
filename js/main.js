@@ -39,7 +39,7 @@ function connectToSpotify() {
     const clientId = '62d4eb4142784c7d9e0a3a1f0b1976ee';
     // Use Netlify dev server for OAuth callback when using Live Server
     const redirectUri = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
-        ? 'http://localhost:3000/auth/callback/'
+        ? 'https://spotify-llm-driven-playlist.netlify.app/auth/callback/'  // Use HTTPS Netlify URL for localhost
         : window.location.origin + window.location.pathname.replace(/\/$/, '') + '/auth/callback/';
     const scope = 'playlist-modify-public playlist-modify-private user-read-email user-read-private';
     const state = Date.now().toString();
