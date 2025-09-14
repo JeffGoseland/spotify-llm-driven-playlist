@@ -69,7 +69,7 @@ async function createSpotifyPlaylistFromResults() {
         
         if (result.success) {
             showPlaylistCreationStatus(
-                `✅ Playlist created successfully! <a href="${result.playlist.external_urls.spotify}" target="_blank" class="alert-link">Open in Spotify</a>`,
+                `✅ Playlist created successfully! <a href="${result.playlist.url}" target="_blank" class="alert-link">Open in Spotify</a>`,
                 'success'
             );
         } else {
