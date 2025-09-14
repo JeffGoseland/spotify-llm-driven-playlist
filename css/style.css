@@ -1,6 +1,6 @@
 /* neural bard - spotify llm playlist generator styles */
 
-/* Toast Notifications Styling */
+/* Toast Notifications Styling - Mystical Dark Theme */
 .toast-container {
     z-index: 9999;
     top: 20vh !important; /* 1/5 of the way from top (20% of viewport height) */
@@ -10,26 +10,59 @@
 }
 
 .toast {
-    background-color: #ffffff !important;
-    border: 1px solid #ddd !important;
-    color: black !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    background-color: #2c2c2c !important;
+    border: 2px solid #1db954 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 20px rgba(29, 185, 84, 0.4), 0 4px 12px rgba(0, 0, 0, 0.6) !important;
     backdrop-filter: blur(10px);
+    border-radius: 12px !important;
+    min-width: 300px;
+    max-width: 500px;
+    animation: toastGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes toastGlow {
+    0% {
+        box-shadow: 0 0 15px rgba(29, 185, 84, 0.3), 0 4px 12px rgba(0, 0, 0, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 25px rgba(29, 185, 84, 0.6), 0 4px 12px rgba(0, 0, 0, 0.6);
+    }
 }
 
 .toast-header {
-    background-color: #f8f9fa !important;
-    border-bottom: 1px solid #dee2e6 !important;
-    color: black !important;
+    background-color: #1db954 !important;
+    border-bottom: 1px solid #1db954 !important;
+    color: #000000 !important;
+    border-radius: 10px 10px 0 0 !important;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toast-header::before {
+    content: "✨";
+    font-size: 1.2em;
 }
 
 .toast-body {
-    background-color: #ffffff !important;
-    color: black !important;
+    background-color: #2c2c2c !important;
+    color: #ffffff !important;
+    border-radius: 0 0 10px 10px !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+    padding: 16px 20px;
 }
 
 .toast .btn-close {
-    filter: none;
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.toast .btn-close:hover {
+    opacity: 1;
+    filter: invert(1) brightness(1.2);
 }
 
 /* Song List Button Styling */

@@ -152,7 +152,7 @@ async function createSpotifyPlaylist(songs, prompt, customTitle = null, replaceE
         ? 'http://localhost:3000/.netlify/functions/spotify-playlist'
         : window.location.hostname === 'spotify-llm-driven-playlist.netlify.app'
         ? '/.netlify/functions/spotify-playlist'
-        : '/api/spotify-playlist';
+        : 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/spotify-playlist';
     
     const response = await fetch(apiUrl, {
         method: 'POST',

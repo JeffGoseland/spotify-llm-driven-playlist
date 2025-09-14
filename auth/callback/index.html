@@ -118,8 +118,11 @@
                 try {
                     console.log('Exchanging code for token...');
                     
-                    // Call real Spotify token exchange
-                    const response = await fetch('/api/spotify-token-exchange', {
+                    // Call real Spotify token exchange - use Netlify endpoint for non-Netlify hosts
+                    const apiUrl = window.location.hostname === 'spotify-llm-driven-playlist.netlify.app'
+                        ? '/.netlify/functions/spotify-token-exchange'
+                        : 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/spotify-token-exchange';
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
