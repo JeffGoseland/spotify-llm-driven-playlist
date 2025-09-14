@@ -40,7 +40,7 @@ function connectToSpotify() {
     // Use Netlify dev server for OAuth callback when using Live Server
     const redirectUri = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
         ? 'http://localhost:3000/auth/callback/'
-        : window.location.origin + '/auth/callback/';
+        : window.location.origin + window.location.pathname.replace(/\/$/, '') + '/auth/callback/';
     const scope = 'playlist-modify-public playlist-modify-private user-read-email user-read-private';
     const state = Date.now().toString();
     
