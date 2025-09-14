@@ -1,7 +1,7 @@
 // neural bard - spotify llm playlist generator main script
 
 // API endpoint configuration
-const API_BASE_URL = window.location.port === '5500' ? 'http://localhost:3000' : '';
+const API_BASE_URL = window.location.port === '5500' ? 'https://localhost:3000' : '';
 
 // Check if user is connected to Spotify
 function checkSpotifyConnection() {
@@ -37,8 +37,15 @@ function checkSpotifyConnection() {
 // Connect to Spotify
 function connectToSpotify() {
     const clientId = '62d4eb4142784c7d9e0a3a1f0b1976ee';
-    // Use Netlify callback URI for all hosts (registered with Spotify)
-    const redirectUri = 'https://spotify-llm-driven-playlist.netlify.app/auth/callback/';
+    // Use appropriate callback URI based on environment
+    let redirectUri;
+    if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
+        redirectUri = 'https://localhost:3000/auth/callback/';
+    } else if (window.location.hostname === 'goseland.org') {
+        redirectUri = 'https://goseland.org/spotify-llm-driven-playlist/auth/callback/';
+    } else {
+        redirectUri = 'https://spotify-llm-driven-playlist.netlify.app/auth/callback/';
+    }
     const scope = 'playlist-modify-public playlist-modify-private user-read-email user-read-private';
     const state = Date.now().toString();
     
@@ -149,7 +156,7 @@ async function createSpotifyPlaylist(songs, prompt, customTitle = null, replaceE
     }
     
     const apiUrl = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
-        ? 'http://localhost:3000/.netlify/functions/spotify-playlist'
+        ? 'https://localhost:3000/.netlify/functions/spotify-playlist'
         : window.location.hostname === 'spotify-llm-driven-playlist.netlify.app'
         ? '/.netlify/functions/spotify-playlist'
         : 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/spotify-playlist';
@@ -213,7 +220,7 @@ async function sendToNeuralBard() {
         
         let apiUrl;
         if (isLocalDev) {
-            apiUrl = 'http://localhost:3000/.netlify/functions/neural-bard';
+            apiUrl = 'https://localhost:3000/.netlify/functions/neural-bard';
         } else if (isNetlify) {
             apiUrl = '/.netlify/functions/neural-bard';
         } else {

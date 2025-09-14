@@ -23,6 +23,8 @@
   "scripts": {
     "start": "node dev-server.js",
     "dev": "node dev-server.js",
+    "start:https": "node dev-server-https.js",
+    "dev:https": "node dev-server-https.js",
     "build": "echo 'Static site - no build needed'",
     "test": "jest",
     "test:watch": "jest --watch",
