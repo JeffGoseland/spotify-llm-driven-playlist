@@ -21,6 +21,8 @@
     "node": ">=18.0.0"
   },
   "scripts": {
+    "start": "node dev-server.js",
+    "dev": "node dev-server.js",
     "build": "echo 'Static site - no build needed'",
     "test": "jest",
     "test:watch": "jest --watch",

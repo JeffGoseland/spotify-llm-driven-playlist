@@ -81,8 +81,10 @@ async function createSpotifyPlaylistFromResults() {
             'Finalizing playlist...'
         ];
         
-        // Show loading modal for Spotify playlist creation
-        showSpotifyPlaylistLoading();
+        // Show loading modal for Spotify playlist creation with 1 second delay
+        setTimeout(() => {
+            showSpotifyPlaylistLoading();
+        }, 1000);
         
         let currentStep = 0;
         progressInterval = setInterval(() => {
@@ -530,16 +532,12 @@ function showToast(message, type = 'info', duration = 5000) {
                      type === 'warning' ? 'fas fa-exclamation-triangle' :
                      'fas fa-info-circle';
     
-    // Color mapping for better visibility
-    const colorClass = type === 'success' ? 'text-success' : 
-                      type === 'error' ? 'text-danger' :
-                      type === 'warning' ? 'text-warning' :
-                      'text-info';
+    // Icon will be styled by our custom CSS
     
     const toastHtml = `
-        <div class="toast" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" style="min-width: 350px;">
+        <div class="toast" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-                <i class="${iconClass} me-2 ${colorClass}"></i>
+                <i class="${iconClass} me-2"></i>
                 <strong class="me-auto">Neural Bard</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>

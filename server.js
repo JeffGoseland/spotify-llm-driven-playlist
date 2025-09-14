@@ -79,7 +79,29 @@ app.post('/api/spotify-token-exchange', async (req, res) => {
 });
 
 // Handle CORS preflight requests
-app.options('/api/*', (req, res) => {
+app.options('/api/neural-bard', (req, res) => {
+    res.status(200)
+       .set({
+           'Access-Control-Allow-Origin': '*',
+           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+           'Access-Control-Max-Age': '86400'
+       })
+       .send();
+});
+
+app.options('/api/spotify-playlist', (req, res) => {
+    res.status(200)
+       .set({
+           'Access-Control-Allow-Origin': '*',
+           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+           'Access-Control-Max-Age': '86400'
+       })
+       .send();
+});
+
+app.options('/api/spotify-token-exchange', (req, res) => {
     res.status(200)
        .set({
            'Access-Control-Allow-Origin': '*',
