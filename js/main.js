@@ -224,13 +224,15 @@ async function sendToNeuralBard() {
         console.log('Using API URL:', apiUrl);
         console.log('Hostname:', window.location.hostname);
         console.log('Is local dev:', isLocalDev);
+        console.log('Is Netlify:', isNetlify);
             
+        console.log('Making API request to:', apiUrl);
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 prompt: prompt,
                 numberOfSongs: parseInt(numberOfSongs)
             })
