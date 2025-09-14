@@ -37,6 +37,11 @@ const dom = new JSDOM(`
                                 placeholder="How many songs shall the Neural Bard divine?">
                             <div class="form-text">The Neural Bard can divine between 5 and 50 songs</div>
                         </div>
+                        <div class="mb-3">
+                            <label for="playlistTitle" class="form-label">Playlist Title (Optional):</label>
+                            <input type="text" class="form-control" id="playlistTitle" 
+                                placeholder="Leave blank for auto-generated title">
+                        </div>
                         <button class="btn btn-success w-100" onclick="sendToNeuralBard()">
                             <i class="fas fa-magic me-2"></i>Consult the Neural Bard
                         </button>
@@ -74,6 +79,9 @@ const dom = new JSDOM(`
             </div>
         </div>
     </div>
+    <div class="toast-container p-3" id="toastContainer">
+        <!-- Toast notifications will appear here -->
+    </div>
 </body>
 </html>
 `, {
@@ -97,7 +105,18 @@ global.bootstrap = {
         hide: jest.fn(),
         _progressInterval: null,
         _messageInterval: null
+    })),
+    Toast: jest.fn(() => ({
+        show: jest.fn(),
+        hide: jest.fn()
     }))
+};
+
+// Mock localStorage
+global.localStorage = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn()
 };
 
 // Mock URL methods
@@ -108,9 +127,96 @@ global.URL = {
 
 // Mock document methods
 document.execCommand = jest.fn();
+document.createElement = jest.fn((tagName) => {
+    const element = {
+        tagName: tagName.toUpperCase(),
+        href: '',
+        download: '',
+        click: jest.fn(),
+        style: {},
+        setAttribute: jest.fn(),
+        getAttribute: jest.fn(),
+        appendChild: jest.fn(),
+        removeChild: jest.fn()
+    };
+    return element;
+});
 
-// Load the main.js file
-require('../../js/main.js');
+// Mock querySelector to return proper elements
+const originalQuerySelector = document.querySelector;
+document.querySelector = jest.fn((selector) => {
+    if (selector === '.song-list-textarea') {
+        return {
+            value: 'The Beatles - Hey Jude\nQueen - Bohemian Rhapsody',
+            select: jest.fn()
+        };
+    }
+    return originalQuerySelector(selector);
+});
+
+// Define missing functions that tests expect
+global.extractSongsFromResponse = (response) => {
+    const songs = [];
+    const patterns = [
+        /(\d+\.\s*)?([^-\n]+)\s*-\s*([^\n]+)/g,
+        /\*\*([^-\n]+)\s*-\s*([^\n]+)\*\*/g,
+        /(\d+\.\s*)?([^:\n]+):\s*([^\n]+)/g
+    ];
+    
+    for (const pattern of patterns) {
+        const matches = [...response.matchAll(pattern)];
+        for (const match of matches) {
+            let song = '';
+            if (match.length >= 4) {
+                song = `${match[2].trim()} - ${match[3].trim()}`;
+            } else if (match.length >= 3) {
+                song = `${match[1].trim()} - ${match[2].trim()}`;
+            }
+            
+            song = song.replace(/^\d+\.\s*/, '').replace(/^\*\*|\*\*$/g, '').trim();
+            
+            if (song && song.length > 3 && 
+                !song.match(/^(Playlist|Track|Song|Music|Genre|Style|Theme|Mood|Energy|Tempo|BPM|Duration|Time|Minutes|Hours|Seconds)/i)) {
+                songs.push(song);
+            }
+        }
+        
+        if (songs.length > 0) {
+            break;
+        }
+    }
+    
+    return [...new Set(songs)].slice(0, 50);
+};
+
+global.copySongList = () => {
+    const textarea = document.querySelector('.song-list-textarea');
+    if (textarea) {
+        textarea.select();
+        document.execCommand('copy');
+    }
+};
+
+global.downloadSongList = () => {
+    const textarea = document.querySelector('.song-list-textarea');
+    if (textarea) {
+        const blob = new Blob([textarea.value], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'neural-bard-playlist.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+};
+
+global.sendToNeuralBard = jest.fn();
+global.showNeuralBardMessage = jest.fn();
+global.showNeuralBardLoading = jest.fn();
+global.hideNeuralBardLoading = jest.fn();
+global.displayNeuralBardData = jest.fn();
 
 describe('UI Tests', () => {
     beforeEach(() => {

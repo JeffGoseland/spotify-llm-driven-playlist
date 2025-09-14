@@ -8,7 +8,7 @@ const handler = require('../../netlify/functions/neural-bard.js').handler;
 // Mock environment
 process.env.GROQ_API_KEY = 'test-api-key';
 
-// Mock fetch for integration tests
+// Mock fetch for integration tests - the function uses fetch directly
 global.fetch = jest.fn();
 
 describe('API Integration Tests (Mocked)', () => {

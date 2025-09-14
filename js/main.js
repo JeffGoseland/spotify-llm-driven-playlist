@@ -81,6 +81,9 @@ async function createSpotifyPlaylistFromResults() {
             'Finalizing playlist...'
         ];
         
+        // Show loading modal for Spotify playlist creation
+        showSpotifyPlaylistLoading();
+        
         let currentStep = 0;
         progressInterval = setInterval(() => {
             if (currentStep < progressSteps.length) {
@@ -92,6 +95,7 @@ async function createSpotifyPlaylistFromResults() {
         const result = await createSpotifyPlaylist(window.currentSongs, window.currentPrompt, customTitle, replaceExisting);
         
         clearInterval(progressInterval);
+        hideSpotifyPlaylistLoading();
         
         if (result.success) {
             const actionText = result.playlist.wasExisting ? 'updated' : 'created';
@@ -109,6 +113,7 @@ async function createSpotifyPlaylistFromResults() {
     } catch (error) {
         console.error('Playlist creation error:', error);
         clearInterval(progressInterval);
+        hideSpotifyPlaylistLoading();
         showPlaylistCreationStatus(`❌ Error creating playlist: ${error.message}`, 'error');
         showToast(`Error creating playlist: ${error.message}`, 'error');
     }
@@ -478,6 +483,20 @@ function showNeuralBardLoading() {
 // hide neural bard loading modal
 function hideNeuralBardLoading() {
     const loadingModal = bootstrap.Modal.getInstance(document.getElementById('neuralBardLoadingModal'));
+    if (loadingModal) {
+        loadingModal.hide();
+    }
+}
+
+// show spotify playlist loading modal
+function showSpotifyPlaylistLoading() {
+    const loadingModal = new bootstrap.Modal(document.getElementById('spotifyPlaylistLoadingModal'));
+    loadingModal.show();
+}
+
+// hide spotify playlist loading modal
+function hideSpotifyPlaylistLoading() {
+    const loadingModal = bootstrap.Modal.getInstance(document.getElementById('spotifyPlaylistLoadingModal'));
     if (loadingModal) {
         loadingModal.hide();
     }

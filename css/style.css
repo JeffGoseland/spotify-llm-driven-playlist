@@ -40,24 +40,30 @@
 .song-list-container .btn {
     color: #1db954 !important;
     border-color: #1db954 !important;
-    background-color: transparent !important;
+    background-color: #1db954 !important;
+    color: #000000 !important;
     margin: 0 5px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .song-list-container .btn:hover {
-    background-color: #1db954 !important;
+    background-color: #1ed760 !important;
     color: #000000 !important;
-    border-color: #1db954 !important;
+    border-color: #1ed760 !important;
 }
 
 .song-list-container .btn-outline-success {
     color: #1db954 !important;
     border-color: #1db954 !important;
+    background-color: #1db954 !important;
+    color: #000000 !important;
 }
 
 .song-list-container .btn-outline-success:hover {
-    background-color: #1db954 !important;
+    background-color: #1ed760 !important;
     color: #000000 !important;
+    border-color: #1ed760 !important;
 }
 
 /* Simple black background approach */
