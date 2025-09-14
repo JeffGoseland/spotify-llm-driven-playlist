@@ -4,7 +4,7 @@
 
 To avoid breaking production, we now use a proper Git branching workflow:
 
-### **Branch Structure:**
+sly
 
 - `main` - **Production branch** (stable, working code)
 - `development` - **Development branch** (testing new features)

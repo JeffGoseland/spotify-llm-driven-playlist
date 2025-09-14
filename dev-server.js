@@ -4,11 +4,67 @@
  */
 
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
 const PORT = 3000;
+const NETLIFY_BASE_URL = 'https://spotify-llm-driven-playlist.netlify.app';
+
+// Function to proxy requests to Netlify functions
+function proxyToNetlify(req, res, netlifyPath) {
+    const targetUrl = `${NETLIFY_BASE_URL}${netlifyPath}`;
+    
+    // Collect request body for POST requests
+    let body = '';
+    if (req.method === 'POST') {
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        
+        req.on('end', () => {
+            makeProxyRequest(targetUrl, req, res, body);
+        });
+    } else {
+        makeProxyRequest(targetUrl, req, res, body);
+    }
+}
+
+function makeProxyRequest(targetUrl, originalReq, res, body) {
+    const options = {
+        method: originalReq.method,
+        headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Neural-Bard-Dev-Server'
+        }
+    };
+    
+    if (body && originalReq.method === 'POST') {
+        options.headers['Content-Length'] = Buffer.byteLength(body);
+    }
+    
+    const proxyReq = https.request(targetUrl, options, (proxyRes) => {
+        // Forward status and headers
+        res.writeHead(proxyRes.statusCode, proxyRes.headers);
+        
+        // Forward response body
+        proxyRes.pipe(res);
+    });
+    
+    proxyReq.on('error', (err) => {
+        console.error('Proxy error:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Proxy request failed', details: err.message }));
+    });
+    
+    // Send request body if present
+    if (body && originalReq.method === 'POST') {
+        proxyReq.write(body);
+    }
+    
+    proxyReq.end();
+}
 
 // MIME types
 const mimeTypes = {
@@ -39,15 +95,18 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // API routes - proxy to Netlify functions
+    // Netlify function routes - proxy to live Netlify functions
+    if (pathname.startsWith('/.netlify/functions/')) {
+        console.log(`🔄 Proxying ${req.method} ${pathname} to Netlify`);
+        proxyToNetlify(req, res, pathname);
+        return;
+    }
+
+    // Legacy API routes - also proxy to Netlify functions
     if (pathname.startsWith('/api/')) {
-        // For local development, we'll return a mock response
-        // or you can proxy to the actual Netlify functions
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ 
-            message: 'API endpoint - use Netlify functions for full functionality',
-            endpoint: pathname 
-        }));
+        const netlifyPath = pathname.replace('/api/', '/.netlify/functions/');
+        console.log(`🔄 Proxying ${req.method} ${pathname} to ${netlifyPath}`);
+        proxyToNetlify(req, res, netlifyPath);
         return;
     }
 
@@ -88,7 +147,9 @@ server.listen(PORT, () => {
     console.log(`🚀 Neural Bard development server running on http://localhost:${PORT}`);
     console.log(`📁 Serving static files from: ${__dirname}`);
     console.log(`🔧 Environment: development`);
+    console.log(`🔄 Proxying Netlify functions to: ${NETLIFY_BASE_URL}`);
     console.log(`\n✨ Open your browser to: http://localhost:${PORT}`);
+    console.log(`🎯 Full functionality available locally!`);
 });
 
 server.on('error', (err) => {
