@@ -145,6 +145,14 @@ describe('Spotify Playlist Creation', () => {
             })
         });
 
+        // Mock existing playlist check (empty response = no existing playlist)
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: () => Promise.resolve({
+                items: []
+            })
+        });
+
         // Mock playlist creation response
         fetch.mockResolvedValueOnce({
             ok: true,

@@ -28,9 +28,14 @@ describe('API Integration Tests (Mocked)', () => {
                 model: 'grok-3-fast'
             };
 
-            global.fetch.mockResolvedValueOnce({
-                ok: true,
-                json: () => Promise.resolve(mockApiResponse)
+            global.fetch.mockImplementationOnce(() => {
+                return Promise.resolve({
+                    ok: true,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: new Map(),
+                    json: () => Promise.resolve(mockApiResponse)
+                });
             });
 
             const event = {
@@ -41,7 +46,7 @@ describe('API Integration Tests (Mocked)', () => {
                 },
                 body: JSON.stringify({ 
                     prompt: 'Create a rock playlist', 
-                    numberOfSongs: 3 
+                    numberOfSongs: 10 
                 })
             };
 
@@ -75,7 +80,10 @@ describe('API Integration Tests (Mocked)', () => {
 
     describe('Error Scenarios (Mocked)', () => {
         test('should handle API timeout gracefully', async () => {
-            global.fetch.mockRejectedValueOnce(new Error('Request timeout'));
+            // Mock fetch to throw a network error
+            global.fetch.mockImplementationOnce(() => {
+                return Promise.reject(new Error('Request timeout'));
+            });
 
             const event = {
                 httpMethod: 'POST',
@@ -95,11 +103,15 @@ describe('API Integration Tests (Mocked)', () => {
         });
 
         test('should handle API rate limiting gracefully', async () => {
-            global.fetch.mockResolvedValueOnce({
-                ok: false,
-                status: 429,
-                statusText: 'Too Many Requests',
-                text: () => Promise.resolve('Rate limit exceeded')
+            // Mock fetch to return a 429 error response
+            global.fetch.mockImplementationOnce(() => {
+                return Promise.resolve({
+                    ok: false,
+                    status: 429,
+                    statusText: 'Too Many Requests',
+                    headers: new Map(),
+                    text: () => Promise.resolve('Rate limit exceeded')
+                });
             });
 
             const event = {
@@ -132,9 +144,14 @@ describe('API Integration Tests (Mocked)', () => {
                 model: 'grok-3-fast'
             };
 
-            global.fetch.mockResolvedValueOnce({
-                ok: true,
-                json: () => Promise.resolve(largeResponse)
+            global.fetch.mockImplementationOnce(() => {
+                return Promise.resolve({
+                    ok: true,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: new Map(),
+                    json: () => Promise.resolve(largeResponse)
+                });
             });
 
             const event = {

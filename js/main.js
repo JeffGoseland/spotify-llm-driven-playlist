@@ -217,7 +217,8 @@ async function sendToNeuralBard() {
         } else if (isNetlify) {
             apiUrl = '/.netlify/functions/neural-bard';
         } else {
-            apiUrl = '/api/neural-bard';
+            // For static hosting providers like goseland.org, use Netlify Functions directly
+            apiUrl = 'https://spotify-llm-driven-playlist.netlify.app/.netlify/functions/neural-bard';
         }
         
         console.log('Using API URL:', apiUrl);
